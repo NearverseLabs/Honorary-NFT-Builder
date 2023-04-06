@@ -23,3 +23,4 @@ CMD serve -s build
 EXPOSE 3000
 
 # Set environment variables
+ENV REACT_APP_API_URL=https://nftserver-s4tcdk7akq-el.a.run.app
