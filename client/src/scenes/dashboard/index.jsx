@@ -34,12 +34,12 @@ function generateRandomName() {
 
 const Dashboard = () => {
   const theme = useTheme();
-  const [background, setBackground] = useState("Yellow");
+  const [background, setBackground] = useState("Greenish");
   const [eyes, setEyes] = useState("none");
   const [hair, setHair] = useState("none");
   const [mouth, setMouth] = useState("none");
   const [outfit, setOutfit] = useState("none");
-  const [prevBackground, setPrevBackground] = useState("Yellow");
+  const [prevBackground, setPrevBackground] = useState("Greenish");
   const [body, setBody] = useState("none");
 
   const [generatedImage, setGeneratedImage] = useState(false);

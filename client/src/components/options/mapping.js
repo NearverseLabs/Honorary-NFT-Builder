@@ -1,10 +1,10 @@
 // background
-import Yellow from "assets/Background/Yellow.png";
-import Violet from "assets/Background/Violet.png";
-import Red from "assets/Background/Red.png";
-import Pink from "assets/Background/Pink.png";
-import MintGreen from "assets/Background/Mint Green.png";
-import Blue from "assets/Background/Blue.png";
+// import Yellow from "assets/Background/Yellow.png";
+// import Violet from "assets/Background/Violet.png";
+// import Red from "assets/Background/Red.png";
+// import Pink from "assets/Background/Pink.png";
+// import MintGreen from "assets/Background/Mint Green.png";
+// import Blue from "assets/Background/Blue.png";
 import Blueish from "assets/Background/Blueish.png";
 import Greenish from "assets/Background/Greenish.png";
 import Pinkish from "assets/Background/Pinkish.png";
@@ -13,13 +13,13 @@ import Reddish from "assets/Background/Reddish.png";
 import Simple from "assets/Background/Simple.png";
 
 // eyes
-import Alert from "assets/Eyes/Alert.png";
-import EyesClosed from "assets/Eyes/Eyes Closed.png";
-import Godly from "assets/Eyes/Godly.png";
-import Modified from "assets/Eyes/Modified.png";
-import normal from "assets/Eyes/normal.png";
-import Wink from "assets/Eyes/Wink.png";
-import Blink from "assets/Eyes/Blink.png";
+// import Alert from "assets/Eyes/Alert.png";
+// import EyesClosed from "assets/Eyes/Eyes Closed.png";
+// import Godly from "assets/Eyes/Godly.png";
+// import Modified from "assets/Eyes/Modified.png";
+// import normal from "assets/Eyes/normal.png";
+// import Wink from "assets/Eyes/Wink.png";
+// import Blink from "assets/Eyes/Blink.png";
 import FireAndIce from "assets/Eyes/Fire and Ice.png";
 import GreenEyes from "assets/Eyes/Green.png";
 import Joker from "assets/Eyes/Joker.png";
@@ -27,36 +27,36 @@ import Rainbow from "assets/Eyes/Rainbow.png";
 import Sunflower from "assets/Eyes/Sunflower.png";
 
 // hair
-import Blonde from "assets/Hair/Blonde.png";
-import David from "assets/Hair/David.png";
-import GR22 from "assets/Hair/GR 22.png";
-import GR from "assets/Hair/GR.png";
-import GR2 from "assets/Hair/GR2.png";
-import Green2 from "assets/Hair/Green 2.png";
-import Green from "assets/Hair/Green.png";
-import Magenta from "assets/Hair/Magenta.png";
-import RedHair from "assets/Hair/Red.png";
-import SaiyaV from "assets/Hair/Saiya V.png";
-import SaiyanB from "assets/Hair/Saiyan B.png";
-import SaiyanGR from "assets/Hair/Saiyan GR.png";
-import SaiyanR from "assets/Hair/Saiyan R.png";
-import Saiyan from "assets/Hair/Saiyan.png";
-import SkyBlue from "assets/Hair/Sky blue.png";
-import White from "assets/Hair/White.png";
-import White2 from "assets/Hair/White2.png";
-import White3 from "assets/Hair/White3.png";
+// import Blonde from "assets/Hair/Blonde.png";
+// import David from "assets/Hair/David.png";
+// import GR22 from "assets/Hair/GR 22.png";
+// import GR from "assets/Hair/GR.png";
+// import GR2 from "assets/Hair/GR2.png";
+// import Green2 from "assets/Hair/Green 2.png";
+// import Green from "assets/Hair/Green.png";
+// import Magenta from "assets/Hair/Magenta.png";
+// import RedHair from "assets/Hair/Red.png";
+// import SaiyaV from "assets/Hair/Saiya V.png";
+// import SaiyanB from "assets/Hair/Saiyan B.png";
+// import SaiyanGR from "assets/Hair/Saiyan GR.png";
+// import SaiyanR from "assets/Hair/Saiyan R.png";
+// import Saiyan from "assets/Hair/Saiyan.png";
+// import SkyBlue from "assets/Hair/Sky blue.png";
+// import White from "assets/Hair/White.png";
+// import White2 from "assets/Hair/White2.png";
+// import White3 from "assets/Hair/White3.png";
 import Fish1 from "assets/Hair/Fish1.png";
 import NinjaBand from "assets/Hair/Ninja Band.png";
 import Rabbit from "assets/Hair/Rabbit.png";
 
 // mouth
-import MouthL from "assets/Mouth/mouth 1.png";
-import Mouth2 from "assets/Mouth/mouth 2.png";
-import Mouth3 from "assets/Mouth/mouth 3.png";
-import Mouth4 from "assets/Mouth/mouth 4.png";
-import Mouth5 from "assets/Mouth/mouth 5.png";
-import Mouth6 from "assets/Mouth/mouth 6.png";
-import Mouth7 from "assets/Mouth/mouth 7.png";
+// import MouthL from "assets/Mouth/mouth 1.png";
+// import Mouth2 from "assets/Mouth/mouth 2.png";
+// import Mouth3 from "assets/Mouth/mouth 3.png";
+// import Mouth4 from "assets/Mouth/mouth 4.png";
+// import Mouth5 from "assets/Mouth/mouth 5.png";
+// import Mouth6 from "assets/Mouth/mouth 6.png";
+// import Mouth7 from "assets/Mouth/mouth 7.png";
 import Censored from "assets/Mouth/Censored.png";
 import Gamps from "assets/Mouth/Gamps.png";
 import Happy from "assets/Mouth/Happy.png";
@@ -65,10 +65,10 @@ import SimpleMouth from "assets/Mouth/Simple.png";
 import Surprised from "assets/Mouth/Surprised.png";
 
 // outfit
-import Outfit1 from "assets/Outfit/outfit 1.png";
-import Outfit2 from "assets/Outfit/outfit 2.png";
-import Outfit3 from "assets/Outfit/outfit 3.png";
-import Outfit4 from "assets/Outfit/outfit 4.png";
+// import Outfit1 from "assets/Outfit/outfit 1.png";
+// import Outfit2 from "assets/Outfit/outfit 2.png";
+// import Outfit3 from "assets/Outfit/outfit 3.png";
+// import Outfit4 from "assets/Outfit/outfit 4.png";
 import BabyPouch from "assets/Outfit/Baby Pouch.png";
 import Eskimo from "assets/Outfit/Eskimo.png";
 import Pilot from "assets/Outfit/Pilot.png";
@@ -76,7 +76,7 @@ import Scientist from "assets/Outfit/Scientist.png";
 import Wizard from "assets/Outfit/Wizard.png";
 
 // body
-import Normal from "assets/Body/Normal.png";
+// import Normal from "assets/Body/Normal.png";
 import Galaxy from "assets/Body/Galaxy.png";
 import Messy from "assets/Body/Messy.png";
 import Nature from "assets/Body/Nature.png";
@@ -85,13 +85,7 @@ import Wood from "assets/Body/Wood.png";
 
 export const AllOptions = {
   background: {
-    "Select Background": "Yellow",
-    Blue: Blue,
-    "Mint Green": MintGreen,
-    Pink: Pink,
-    Red: Red,
-    Violet: Violet,
-    Yellow: Yellow,
+    "Select Background": "Greenish",
     Blueish: Blueish,
     Greenish: Greenish,
     Pinkish: Pinkish,
@@ -101,13 +95,6 @@ export const AllOptions = {
   },
   eyes: {
     "Select Eyes": "none",
-    Alert: Alert,
-    "Eyes Closed": EyesClosed,
-    Godly: Godly,
-    Modified: Modified,
-    normal: normal,
-    Wink: Wink,
-    Blink: Blink,
     "Fire and Ice": FireAndIce,
     Green: GreenEyes,
     Joker: Joker,
@@ -116,37 +103,12 @@ export const AllOptions = {
   },
   hair: {
     "Select Hair": "none",
-    Blonde: Blonde,
-    David: David,
-    "GR 22": GR22,
-    GR: GR,
-    GR2: GR2,
-    "Green 2": Green2,
-    Green: Green,
-    Magenta: Magenta,
-    Red: RedHair,
-    "Saiya V": SaiyaV,
-    "Saiyan B": SaiyanB,
-    "Saiyan GR": SaiyanGR,
-    "Saiyan R": SaiyanR,
-    Saiyan: Saiyan,
-    "Sky blue": SkyBlue,
-    White: White,
-    White2: White2,
-    White3: White3,
     Fish1: Fish1,
     "Ninja Band": NinjaBand,
     Rabbit: Rabbit,
   },
   mouth: {
     "Select Mouth": "none",
-    "mouth l": MouthL,
-    "mouth 2": Mouth2,
-    "mouth 3": Mouth3,
-    "mouth 4": Mouth4,
-    "mouth 5": Mouth5,
-    "mouth 6": Mouth6,
-    "mouth 7": Mouth7,
     Censored: Censored,
     Gamps: Gamps,
     Happy: Happy,
@@ -156,10 +118,6 @@ export const AllOptions = {
   },
   outfit: {
     "Select Outfit": "none",
-    "outfit 1": Outfit1,
-    "outfit 2": Outfit2,
-    "outfit 3": Outfit3,
-    "outfit 4": Outfit4,
     "Baby Pouch": BabyPouch,
     Eskimo: Eskimo,
     Pilot: Pilot,
@@ -168,7 +126,6 @@ export const AllOptions = {
   },
   body: {
     "Select Body": "none",
-    Normal: Normal,
     Galaxy: Galaxy,
     Messy: Messy,
     Nature: Nature,
