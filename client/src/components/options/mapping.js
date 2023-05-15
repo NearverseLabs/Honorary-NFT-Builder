@@ -5,6 +5,12 @@ import Red from "assets/Background/Red.png";
 import Pink from "assets/Background/Pink.png";
 import MintGreen from "assets/Background/Mint Green.png";
 import Blue from "assets/Background/Blue.png";
+import Blueish from "assets/Background/Blueish.png";
+import Greenish from "assets/Background/Greenish.png";
+import Pinkish from "assets/Background/Pinkish.png";
+import Purpleish from "assets/Background/Purpleish.png";
+import Reddish from "assets/Background/Reddish.png";
+import Simple from "assets/Background/Simple.png";
 
 // eyes
 import Alert from "assets/Eyes/Alert.png";
@@ -13,6 +19,12 @@ import Godly from "assets/Eyes/Godly.png";
 import Modified from "assets/Eyes/Modified.png";
 import normal from "assets/Eyes/normal.png";
 import Wink from "assets/Eyes/Wink.png";
+import Blink from "assets/Eyes/Blink.png";
+import FireAndIce from "assets/Eyes/Fire and Ice.png";
+import GreenEyes from "assets/Eyes/Green.png";
+import Joker from "assets/Eyes/Joker.png";
+import Rainbow from "assets/Eyes/Rainbow.png";
+import Sunflower from "assets/Eyes/Sunflower.png";
 
 // hair
 import Blonde from "assets/Hair/Blonde.png";
@@ -33,6 +45,9 @@ import SkyBlue from "assets/Hair/Sky blue.png";
 import White from "assets/Hair/White.png";
 import White2 from "assets/Hair/White2.png";
 import White3 from "assets/Hair/White3.png";
+import Fish1 from "assets/Hair/Fish1.png";
+import NinjaBand from "assets/Hair/Ninja Band.png";
+import Rabbit from "assets/Hair/Rabbit.png";
 
 // mouth
 import MouthL from "assets/Mouth/mouth 1.png";
@@ -42,16 +57,31 @@ import Mouth4 from "assets/Mouth/mouth 4.png";
 import Mouth5 from "assets/Mouth/mouth 5.png";
 import Mouth6 from "assets/Mouth/mouth 6.png";
 import Mouth7 from "assets/Mouth/mouth 7.png";
+import Censored from "assets/Mouth/Censored.png";
+import Gamps from "assets/Mouth/Gamps.png";
+import Happy from "assets/Mouth/Happy.png";
+import JokerMouth from "assets/Mouth/Joker.png";
+import SimpleMouth from "assets/Mouth/Simple.png";
+import Surprised from "assets/Mouth/Surprised.png";
 
 // outfit
 import Outfit1 from "assets/Outfit/outfit 1.png";
 import Outfit2 from "assets/Outfit/outfit 2.png";
 import Outfit3 from "assets/Outfit/outfit 3.png";
 import Outfit4 from "assets/Outfit/outfit 4.png";
+import BabyPouch from "assets/Outfit/Baby Pouch.png";
+import Eskimo from "assets/Outfit/Eskimo.png";
+import Pilot from "assets/Outfit/Pilot.png";
+import Scientist from "assets/Outfit/Scientist.png";
+import Wizard from "assets/Outfit/Wizard.png";
 
 // body
 import Normal from "assets/Body/Normal.png";
-
+import Galaxy from "assets/Body/Galaxy.png";
+import Messy from "assets/Body/Messy.png";
+import Nature from "assets/Body/Nature.png";
+import WhiteTiger from "assets/Body/White Tiger.png";
+import Wood from "assets/Body/Wood.png";
 
 export const AllOptions = {
   background: {
@@ -62,6 +92,12 @@ export const AllOptions = {
     Red: Red,
     Violet: Violet,
     Yellow: Yellow,
+    Blueish: Blueish,
+    Greenish: Greenish,
+    Pinkish: Pinkish,
+    Purpleish: Purpleish,
+    Reddish: Reddish,
+    Simple: Simple,
   },
   eyes: {
     "Select Eyes": "none",
@@ -71,6 +107,12 @@ export const AllOptions = {
     Modified: Modified,
     normal: normal,
     Wink: Wink,
+    Blink: Blink,
+    "Fire and Ice": FireAndIce,
+    Green: GreenEyes,
+    Joker: Joker,
+    Rainbow: Rainbow,
+    Sunflower: Sunflower,
   },
   hair: {
     "Select Hair": "none",
@@ -92,6 +134,9 @@ export const AllOptions = {
     White: White,
     White2: White2,
     White3: White3,
+    Fish1: Fish1,
+    "Ninja Band": NinjaBand,
+    Rabbit: Rabbit,
   },
   mouth: {
     "Select Mouth": "none",
@@ -102,6 +147,12 @@ export const AllOptions = {
     "mouth 5": Mouth5,
     "mouth 6": Mouth6,
     "mouth 7": Mouth7,
+    Censored: Censored,
+    Gamps: Gamps,
+    Happy: Happy,
+    Joker: JokerMouth,
+    Simple: SimpleMouth,
+    Surprised: Surprised,
   },
   outfit: {
     "Select Outfit": "none",
@@ -109,11 +160,21 @@ export const AllOptions = {
     "outfit 2": Outfit2,
     "outfit 3": Outfit3,
     "outfit 4": Outfit4,
+    "Baby Pouch": BabyPouch,
+    Eskimo: Eskimo,
+    Pilot: Pilot,
+    Scientist: Scientist,
+    Wizard: Wizard,
   },
   body: {
     "Select Body": "none",
     Normal: Normal,
-  }
+    Galaxy: Galaxy,
+    Messy: Messy,
+    Nature: Nature,
+    "White Tiger": WhiteTiger,
+    Wood: Wood,
+  },
 };
 
 const background_options = [
