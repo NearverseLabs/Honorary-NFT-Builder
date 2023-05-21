@@ -14,6 +14,8 @@ import {
   Select,
   useMediaQuery,
   Button,
+  Menu,
+  ListItemIcon,
 } from "@mui/material";
 
 import { AllOptions } from "components/options/mapping";
@@ -186,19 +188,19 @@ const Dashboard = () => {
   const handleTweet = async () => {
     const tweetMessage =
       "Thank you @CynicsNFT for the honorary. I am rooting for you!\n\n Claim your honorary at ";
-    const imageBlob = await new Promise((resolve) => {
-      const element = document.getElementById("imageBox");
-      html2canvas(element, {
-        width: 400,
-        height: 400,
-        x: (element.scrollWidth - 400) / 2,
-        y: (element.scrollHeight - 400) / 2,
-        useCORS: true,
-        scale: window.devicePixelRatio, // added option to increase resolution
-      }).then((canvas) => {
-        canvas.toBlob(resolve, "image/png", 0.9); // added quality option (0.9)
-      });
-    });
+    // const imageBlob = await new Promise((resolve) => {
+    //   const element = document.getElementById("imageBox");
+    //   html2canvas(element, {
+    //     width: 400,
+    //     height: 400,
+    //     x: (element.scrollWidth - 400) / 2,
+    //     y: (element.scrollHeight - 400) / 2,
+    //     useCORS: true,
+    //     scale: window.devicePixelRatio, // added option to increase resolution
+    //   }).then((canvas) => {
+    //     canvas.toBlob(resolve, "image/png", 0.9); // added quality option (0.9)
+    //   });
+    // });
     // add this image to the form data
     // const formData = new FormData();
 
@@ -233,6 +235,54 @@ const Dashboard = () => {
         paddingBottom: "90px",
       }}
     >
+      <Box sx={{
+        id: "roundColorBox1",
+        position: "absolute",
+        background: "#359762",
+        width: "356px",
+        height:"356px",
+        filter: "blur(175px)",
+        left:"-182px",
+        top : "-68px"
+      }}></Box>
+      <Box sx={{
+        id: "roundColorBox2",
+        position: "absolute",
+        background: " linear-gradient(148.1deg, rgba(255, 235, 96, 0.8) -13.86%, rgba(0, 172, 79, 0.8) 40.54%, rgba(255, 235, 96, 0.8) 94.95%)",
+        width: "356px",
+        height:"356px",
+        filter: "blur(175px)",
+        bottom: "0px",
+        right:"0px"
+      }}></Box>
+      <Box
+        sx={{
+          id: "star1",
+          position: "absolute",
+          background: "#4DEF97",
+          width: "20px",
+          height: "22px",
+          left: "42px",
+          top: "263px",
+          transform: "rotate(45deg)",
+          clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+          transformOrigin: "50% 50%",
+        }}
+      ></Box>
+      <Box
+        sx={{
+          id: "star2",
+          position: "absolute",
+          background: "#4DEF97",
+          width: "20px",
+          height: "22px",
+          right: "10px",
+          top: "376px",
+          transform: "rotate(45deg)",
+          clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+          transformOrigin: "50% 50%",
+        }}
+      ></Box>
       <Box
         sx={{
           display: "flex",
@@ -247,20 +297,39 @@ const Dashboard = () => {
           <Typography
             sx={{
               color: theme.palette.neutral.main,
-              fontFamily: "Poppins",
+              fontFamily: "Zen Dots",
+              fontStyle: "normal",
               textAlign: "center",
-              fontWeight: 900,
+              fontWeight: 400,
               fontSize: "40px",
               lineHeight: "60px",
               margin: "0 5%",
             }}
           >
-            Build your Honorary - Cynic Society
+            Build your Honorary{" "}
+            <Typography
+              sx={{
+                fontFamily: "Zen Dots",
+                fontStyle: "normal",
+                fontWeight: "400",
+                fontSize: "40px",
+                textAlign: "center",
+                background:
+                  "linear-gradient(89.64deg, #D8C74F 19.51%, #3BAB6E 63.86%, #3CBE78 101.29%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                textFillColor: "transparent",
+              }}
+              component={"span"}
+            >
+              - Felix Collective
+            </Typography>
           </Typography>
           <Typography
             sx={{
               color: "#ffff",
-              fontFamily: "Poppins",
+              fontFamily: "Turret Road",
               fontWeight: 400,
               textAlign: "center",
               fontStyle: "normal",
@@ -298,12 +367,17 @@ const Dashboard = () => {
                 alignItems: "center",
                 justifyContent: "space-between",
                 "& .MuiSelect-select": {
-                  fontWeight: 400,
-                  fontFamily: "Poppins",
+                  fontWeight: 700,
+                  fontFamily: "Turret Road",
                   letterSpacing: "-0.02em",
                   lineHeight: "30px",
                   fontSize: "20px",
                   fontStyle: "normal",
+                  // change the background color of dropdown
+                  // hide the list item icon
+                  "& .MuiListItemIcon-root": {
+                    display: "none",
+                  },
                 },
               }}
             >
@@ -313,7 +387,6 @@ const Dashboard = () => {
                   backgroundColor: theme.palette.neutral.main,
                   width: "276px",
                   height: "50px",
-                  // change the style of menu item
                 }}
                 variant="outlined"
                 displayEmpty
@@ -327,8 +400,42 @@ const Dashboard = () => {
                 // change the style of menu item
               >
                 {Object.keys(AllOptions.background).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Background" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          src={
+                            AllOptions.background[
+                              value === "Select Background" ? "Greenish" : value
+                            ]
+                          }
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -343,12 +450,45 @@ const Dashboard = () => {
                 displayEmpty
                 required
                 inputProps={{ "aria-label": "Without label" }}
-                defaultValue={"Select Body"}
+                defaultValue={"Select Fur"}
                 onChange={(e) => setBody(e.target.value)}
               >
                 {Object.keys(AllOptions.body).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Fur" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          sx={{
+                            backgroundColor: "#ffeb60",
+                          }}
+                          src={AllOptions.body[value]}
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -367,8 +507,41 @@ const Dashboard = () => {
                 onChange={(e) => setEyes(e.target.value)}
               >
                 {Object.keys(AllOptions.eyes).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Eyes" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          sx={{
+                            backgroundColor: "#ffeb60",
+                          }}
+                          src={AllOptions.eyes[value]}
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -387,8 +560,41 @@ const Dashboard = () => {
                 onChange={(e) => setHair(e.target.value)}
               >
                 {Object.keys(AllOptions.hair).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Hair" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          sx={{
+                            backgroundColor: "#ffeb60",
+                          }}
+                          src={AllOptions.hair[value]}
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -407,8 +613,41 @@ const Dashboard = () => {
                 onChange={(e) => setMouth(e.target.value)}
               >
                 {Object.keys(AllOptions.mouth).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Mouth" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          sx={{
+                            backgroundColor: "#ffeb60",
+                          }}
+                          src={AllOptions.mouth[value]}
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -427,8 +666,41 @@ const Dashboard = () => {
                 onChange={(e) => setOutfit(e.target.value)}
               >
                 {Object.keys(AllOptions.outfit).map((value, index) => (
-                  <MenuItem key={index} value={value}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key={index}
+                    value={value}
+                  >
                     {value}
+
+                    {value !== "Select Outfit" && (
+                      <ListItemIcon>
+                        <Box
+                          component="img"
+                          id="background"
+                          sx={{
+                            backgroundColor: "#ffeb60",
+                          }}
+                          src={AllOptions.outfit[value]}
+                          width="30px"
+                          height="30px"
+                          borderRadius={"4px"}
+                          right={"20px"}
+                          alignContent={"center"}
+                        />
+                      </ListItemIcon>
+                    )}
                   </MenuItem>
                 ))}
               </Select>
@@ -470,18 +742,79 @@ const Dashboard = () => {
                     }
                   }}
                 >
-                  <MenuItem key="0" value={"Ai Variant"}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key="0"
+                    value="Ai Variant"
+                  >
                     Ai Variant
                   </MenuItem>
-                  <MenuItem key="org" value={"Original"}>
+                  <MenuItem
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      color: "#ffff",
+                      fontFamily: "Turret Road",
+                      fontWeight: 700,
+                      fontSize: "16px",
+                      letterSpacing: "0.05em",
+                      lineHeight: "17px",
+                      textAlign: "center",
+                    }}
+                    key="org"
+                    value={"Original"}
+                  >
                     Original
                   </MenuItem>
                   {Object.keys(AllOptions.background).map((value, index) => {
                     // console.log(value);
                     if (value.length === 2) {
                       return (
-                        <MenuItem key={index} value={value}>
+                        <MenuItem
+                          sx={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            color: "#ffff",
+                            fontFamily: "Turret Road",
+                            fontWeight: 700,
+                            fontSize: "16px",
+                            letterSpacing: "0.05em",
+                            lineHeight: "17px",
+                            textAlign: "center",
+                          }}
+                          key={index}
+                          value={value}
+                        >
                           {value}
+
+                          <ListItemIcon>
+                            <Box
+                              component="img"
+                              id="background"
+                              sx={{
+                                backgroundColor: "#ffeb60",
+                              }}
+                              src={AllOptions.background[value]}
+                              width="30px"
+                              height="30px"
+                              borderRadius={"4px"}
+                              right={"20px"}
+                              alignContent={"center"}
+                            />
+                          </ListItemIcon>
                         </MenuItem>
                       );
                     }

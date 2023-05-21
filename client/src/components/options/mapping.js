@@ -85,7 +85,7 @@ import Wood from "assets/Body/Wood.png";
 
 export const AllOptions = {
   background: {
-    "Select Background": "Greenish",
+    "Select Background": Greenish,
     Blueish: Blueish,
     Greenish: Greenish,
     Pinkish: Pinkish,
@@ -125,7 +125,7 @@ export const AllOptions = {
     Wizard: Wizard,
   },
   body: {
-    "Select Body": "none",
+    "Select Fur": "none",
     Galaxy: Galaxy,
     Messy: Messy,
     Nature: Nature,
