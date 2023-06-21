@@ -21,3 +21,4 @@ CMD [ "npm", "start" ]
 
 # Set environment variables
 ENV OPENAI_API_KEY="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"
+ENV MIDJOURNEY_API_KEY="49f03540-fde6-4b1b-a9bf-86d67892751b"

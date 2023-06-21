@@ -1,4 +1,6 @@
 import {
+  Cancel,
+  Close,
   Download,
   Pending,
   RotateRight,
@@ -14,19 +16,26 @@ import {
   Select,
   useMediaQuery,
   Button,
-  Menu,
   ListItemIcon,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 
-import { AllOptions } from "components/options/mapping";
+import { textPrompt } from "./aiPowered";
+import { AllOptions, SmallSizeOptions } from "components/options/mapping";
 import React, { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 
 import {
-  useGetTwitterImageMutation,
   useGetDalleImageMutation,
+  useGetMidJourneyImageMutation,
+  useGetMidJourneyImageVersionMutation,
 } from "state/api";
+
+function randomPrompt() {
+  return textPrompt[Math.floor(Math.random() * 20)];
+}
 
 function generateRandomName() {
   const timestamp = new Date().getTime();
@@ -36,26 +45,40 @@ function generateRandomName() {
 
 const Dashboard = () => {
   const theme = useTheme();
-  const [background, setBackground] = useState("Greenish");
-  const [eyes, setEyes] = useState("none");
-  const [hair, setHair] = useState("none");
-  const [mouth, setMouth] = useState("none");
-  const [outfit, setOutfit] = useState("none");
+  const [background, setBackground] = useState("Select Background");
+  const [eyes, setEyes] = useState("Select Eyes");
+  const [hair, setHair] = useState("Select Hair");
+  const [mouth, setMouth] = useState("Select Mouth");
+  const [outfit, setOutfit] = useState("Select Outfit");
   const [prevBackground, setPrevBackground] = useState("Greenish");
-  const [body, setBody] = useState("none");
+  const [body, setBody] = useState("Select Fur");
+  const [selected, setSelected] = useState("Original");
+  const [nftTheme, setNftTheme] = useState("Select Ai Theme");
 
   const [generatedImage, setGeneratedImage] = useState(false);
-  const [getTwitterImage] = useGetTwitterImageMutation();
   const [getDalleImage] = useGetDalleImageMutation();
+  const [getMidJourneyImage] = useGetMidJourneyImageMutation();
+  const [getMidJourneyVersionImage] = useGetMidJourneyImageVersionMutation();
   const [generatingImg, setGeneratingImg] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
   const [aiBtn, setAiBtn] = useState("generate");
+  const [aiVersionBtn, setAiVersionBtn] = useState("generate");
+  const [atVersion, setAtVersion] = useState("Select Version");
+  const [imageMidJourney, setImageMidJourney] = useState("none");
+  const [msg, setMsg] = useState("");
+  const [dropdownMan, setdropdownMan] = useState({
+    Background: false,
+    Eyes: false,
+    Body: false,
+    Mouth: false,
+  });
+
   const myref = useRef(null);
-  const [prompt, setPrompt] = useState(
-    "generate a image containing tree and sky and villa build upon the tree"
-  );
+  const midJourneyButton = useRef(null);
+  const midJourneyVersionButton = useRef(null);
 
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const handleDownload = () => {
     const element = document.getElementById("imageBox");
     setIsDownload(true);
@@ -80,6 +103,10 @@ const Dashboard = () => {
           setIsDownload(false);
         });
     } else {
+      // create a duplicate hidden element from element and give them style to 512px widh
+      if (isTablet) {
+        element.style.width = "512px";
+      }
       html2canvas(element, {
         width: 512,
         height: 512,
@@ -98,20 +125,85 @@ const Dashboard = () => {
           1
         ); // added quality option (0.9)
         setIsDownload(false);
+        element.style.width = "100%";
       });
       // setIsDownload(false);
     }
   };
 
+  const generateVersionImage = async () => {
+    if (atVersion === "Select Version") {
+      alert("Please Select Version");
+      return;
+    }
+    // disable the button
+    midJourneyVersionButton.current.disabled = true;
+    // midJourneyVersionButton.current.onclick = null;
+
+    setAiVersionBtn("generating");
+    getMidJourneyVersionImage({
+      data: {
+        version: atVersion,
+        buttonId: localStorage.getItem("buttonMessageId"),
+      },
+    })
+      .unwrap()
+      .then((res) => {
+        localStorage.setItem(
+          `midJourneyVersion${atVersion}Image`,
+          res.response.imageUrl
+        );
+        myref.current.src = res.response.imageUrl;
+        // change the z-index of the image
+        myref.current.style.zIndex = "2";
+        setAiVersionBtn("generated");
+        setGeneratedImage(true);
+        setGeneratingImg(false);
+        // enable the button
+        midJourneyButton.current.disabled = false;
+        midJourneyVersionButton.current.disabled = false;
+        setTimeout(() => {
+          setAiVersionBtn("generate");
+          setAiBtn("generate");
+        }, 3000);
+      });
+  };
   const generateImage = async () => {
+    if (nftTheme === "Select Ai Theme") {
+      alert("Please Select Ai Theme");
+      return;
+    }
+    if (background === "Select Background") {
+      setdropdownMan({ ...dropdownMan, Background: true });
+      return;
+    }
+    if (body === "Select Fur") {
+      setdropdownMan({ ...dropdownMan, Body: true });
+      return;
+    }
+    if (eyes === "Select Eyes") {
+      setdropdownMan({ ...dropdownMan, Eyes: true });
+      return;
+    }
+    if (mouth === "Select Mouth") {
+      setdropdownMan({ ...dropdownMan, Mouth: true });
+      return;
+    }
+
+    // disable the button
+    midJourneyButton.current.disabled = true;
+
     setGeneratingImg(true);
     // appennd the processing icon to the aibtn button
     setAiBtn("generating");
-    const randomPromp = "generate a image";
+    const prompt = randomPrompt() + `${nftTheme}`;
     const formdata = new FormData();
-    formdata.append("prompt", randomPromp);
+    formdata.append("prompt", prompt);
     const imageBlob = await new Promise((resolve) => {
       const element = document.getElementById("imageBox");
+      if (isTablet) {
+        element.style.width = "512px";
+      }
       html2canvas(element, {
         width: 512,
         height: 512,
@@ -122,6 +214,7 @@ const Dashboard = () => {
         scale: window.devicePixelRatio, // added option to increase resolution
       }).then((canvas) => {
         canvas.toBlob(resolve, "image/png", 0.9); // added quality option (0.9)
+        element.style.width = "100%";
       });
     });
     const fileName = generateRandomName();
@@ -132,89 +225,49 @@ const Dashboard = () => {
     const formData = new FormData();
     formData.append("picture", file);
     formData.append("image_name", fileName);
-    formData.append("prompt", randomPromp);
+    formData.append("prompt", prompt);
     // console.log(formData.get("picture"));
 
-    getDalleImage({ data: formData })
+    getMidJourneyImage({ data: formData })
       .unwrap()
       .then((res) => {
-        const data = res;
-        /**  this is for only image generation  
-        const base64Data = data.photo;
-        console.log("base64Data", base64Data);
-        const img = new Image();
-        img.src = `data:image/jpeg;base64,${base64Data}`;
-        img.onload = function () {
-          // Once the image has loaded, you can add it to the DOM
-          const container = document.getElementById("image-container");
-          // change the src of the container
-          container.src = img.src;
-          container.style.display = "block";
-        };
-        **/
-        // const data = {
-        //   photo: {
-        //     data: [
-        //       {
-        //         url: "https://th.bing.com/th/id/R.b66fa8b953f0c30192a9c58f58a7ec0c?rik=UD92R1yCl3vOnQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-qSGjEEnD8Vc%2fUI6Oxpn4qnI%2fAAAAAAAAMgI%2fcTrdNVzkK90%2fs1600%2fSnow%2bWallpapers%2b4.jpg&ehk=MOeVY7Vxq6CPsCwz2KpjjOvkiKHFACiAvOarS2w0Ybs%3d&risl=&pid=ImgRaw&r=0",
-        //       },
-        //     ],
-        //   },
-        // };
-        const urlLen = data.photo.data.length;
-        if (!AllOptions.background.v1) {
-          AllOptions.background = {
-            ...AllOptions.background,
-          };
+        // if response status is not 200 and 201 then show error message
 
-          for (let i = 0; i < urlLen; i++) {
-            const key = `v${i + 1}`;
-            AllOptions.background[key] = data.photo.data[i].url;
-          }
-        } else {
-          for (let i = 0; i < urlLen; i++) {
-            AllOptions.background[`v${i + 1}`] = data.photo.data[i].url;
-          }
-        }
+        // console.log(res);
+        // if (res.status !== 200 && res.status !== 201) {
+        //   setMsg(
+        //     "Error generating AI results: API not responding. Please try later"
+        //   );
+        //   setAiBtn("generate");
+        //   return;
+        // }
+        // ;
+        localStorage.setItem("buttonMessageId", res.response.buttonMessageId);
+        localStorage.setItem("MessageId", res.response.originatingMessageId);
+        setImageMidJourney(res.response.imageUrl);
+        myref.current.src = res.response.imageUrl;
+        // change the z-index of the image
+        myref.current.style.zIndex = "2";
+        setMsg("");
         setAiBtn("generated");
         setGeneratedImage(true);
         setGeneratingImg(false);
-        setTimeout(() => {
-          setAiBtn("generate");
-        }, 3000);
+        // setTimeout(() => {
+        //   setAiBtn("generate");
+        // }, 3000);
+      })
+      .catch((err) => {
+        setMsg(
+          "Error generating AI results: API not responding. Please try later"
+        );
+        midJourneyButton.current.disabled = false;
+        setAiBtn("generate");
       });
   };
 
   const handleTweet = async () => {
     const tweetMessage =
-      "Thank you @CynicsNFT for the honorary. I am rooting for you!\n\n Claim your honorary at ";
-    // const imageBlob = await new Promise((resolve) => {
-    //   const element = document.getElementById("imageBox");
-    //   html2canvas(element, {
-    //     width: 400,
-    //     height: 400,
-    //     x: (element.scrollWidth - 400) / 2,
-    //     y: (element.scrollHeight - 400) / 2,
-    //     useCORS: true,
-    //     scale: window.devicePixelRatio, // added option to increase resolution
-    //   }).then((canvas) => {
-    //     canvas.toBlob(resolve, "image/png", 0.9); // added quality option (0.9)
-    //   });
-    // });
-    // add this image to the form data
-    // const formData = new FormData();
-
-    // const fileName = generateRandomName();
-    // formData.append("picture", imageBlob, fileName);
-
-    // // Append image name to FormData
-    // formData.append("image_name", fileName);
-
-    // getTwitterImage(formData)
-    //   .unwrap()
-    //   .then((res) => {
-    //     console.log(" response is ",res)
-    //   });
+      "Thank you, @FelixCollective, for the AI-Powered honorary.%0A%0ABuild your own honorary and Tweet to claim your Whitelist: ";
     const twitterUrl = `https://twitter.com/intent/tweet?text=${tweetMessage}&url=${encodeURIComponent(
       window.location.href
     )}`;
@@ -229,32 +282,37 @@ const Dashboard = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        mt: "70px",
+        mt: "50px",
         gap: "20px",
         mb: "90px",
-        paddingBottom: "90px",
+        paddingBottom: "50px",
       }}
     >
-      <Box sx={{
-        id: "roundColorBox1",
-        position: "absolute",
-        background: "#359762",
-        width: "356px",
-        height:"356px",
-        filter: "blur(175px)",
-        left:"-182px",
-        top : "-68px"
-      }}></Box>
-      <Box sx={{
-        id: "roundColorBox2",
-        position: "absolute",
-        background: " linear-gradient(148.1deg, rgba(255, 235, 96, 0.8) -13.86%, rgba(0, 172, 79, 0.8) 40.54%, rgba(255, 235, 96, 0.8) 94.95%)",
-        width: "356px",
-        height:"356px",
-        filter: "blur(175px)",
-        bottom: "0px",
-        right:"0px"
-      }}></Box>
+      <Box
+        sx={{
+          id: "roundColorBox1",
+          position: "absolute",
+          background: "#359762",
+          width: "356px",
+          height: "356px",
+          filter: "blur(175px)",
+          left: "-182px",
+          top: "-68px",
+        }}
+      ></Box>
+      <Box
+        sx={{
+          id: "roundColorBox2",
+          position: "absolute",
+          background:
+            " linear-gradient(148.1deg, rgba(255, 235, 96, 0.8) -13.86%, rgba(0, 172, 79, 0.8) 40.54%, rgba(255, 235, 96, 0.8) 94.95%)",
+          width: "356px",
+          height: "356px",
+          filter: "blur(175px)",
+          bottom: "0px",
+          right: "0px",
+        }}
+      ></Box>
       <Box
         sx={{
           id: "star1",
@@ -265,7 +323,8 @@ const Dashboard = () => {
           left: "42px",
           top: "263px",
           transform: "rotate(45deg)",
-          clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+          clipPath:
+            "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
           transformOrigin: "50% 50%",
         }}
       ></Box>
@@ -279,7 +338,8 @@ const Dashboard = () => {
           right: "10px",
           top: "376px",
           transform: "rotate(45deg)",
-          clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+          clipPath:
+            "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
           transformOrigin: "50% 50%",
         }}
       ></Box>
@@ -290,6 +350,7 @@ const Dashboard = () => {
           alignItems: "center",
           justifyContent: "center",
           gap: "20px",
+          zIndex: "1",
         }}
       >
         {/* cp1 */}
@@ -297,7 +358,7 @@ const Dashboard = () => {
           <Typography
             sx={{
               color: theme.palette.neutral.main,
-              fontFamily: "Zen Dots",
+
               fontStyle: "normal",
               textAlign: "center",
               fontWeight: 400,
@@ -306,10 +367,9 @@ const Dashboard = () => {
               margin: "0 5%",
             }}
           >
-            Build your Honorary{" "}
+            Build your AI-
             <Typography
               sx={{
-                fontFamily: "Zen Dots",
                 fontStyle: "normal",
                 fontWeight: "400",
                 fontSize: "40px",
@@ -323,7 +383,7 @@ const Dashboard = () => {
               }}
               component={"span"}
             >
-              - Felix Collective
+              Powered Honorary
             </Typography>
           </Typography>
           <Typography
@@ -341,8 +401,8 @@ const Dashboard = () => {
               marginLeft: "10%",
             }}
           >
-            You earned an honorary merely for being here, surviving the bear
-            market and a ton of soft rugs.
+            You earned an honorary from The Felix Collective merely for being
+            here, surviving the bear market, and a ton of soft rugs.
           </Typography>
         </Box>
         {/* cp2 */}
@@ -350,8 +410,9 @@ const Dashboard = () => {
           sx={{
             display: "flex",
             flexDirection: isTablet ? "column" : "row",
-            gap: "45px",
+            gap: "40px",
             padding: "0 5%",
+            alignItems: isTablet ? "center" : "flex-start",
             // flexWrap: "wrap",
             justifyContent: "space-between",
             width: "100%",
@@ -381,170 +442,361 @@ const Dashboard = () => {
                 },
               }}
             >
-              <Select
-                sx={{
-                  color: "#0D7F41",
-                  backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
-                }}
-                variant="outlined"
-                displayEmpty
-                required
-                inputProps={{ "aria-label": "Without label" }}
-                onChange={(e) => {
-                  setBackground(e.target.value);
-                  setPrevBackground(e.target.value);
-                }}
-                defaultValue={"Select Background"}
-                // change the style of menu item
-              >
-                {Object.keys(AllOptions.background).map((value, index) => (
-                  <MenuItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
-                    }}
-                    key={index}
-                    value={value}
-                  >
-                    {value}
+              <FormControl error={dropdownMan.Background}>
+                <Select
+                  sx={{
+                    color: "#0D7F41",
+                    backgroundColor: theme.palette.neutral.main,
+                    width: "276px",
+                    height: "50px",
+                  }}
+                  variant="outlined"
+                  displayEmpty
+                  required
+                  inputProps={{ "aria-label": "Without label" }}
+                  onChange={(e) => {
+                    setBackground(e.target.value);
+                    setPrevBackground(e.target.value);
+                    setdropdownMan({ ...dropdownMan, Background: false });
+                  }}
+                  defaultValue={"Select Background"}
+                  // change the style of menu item
+                >
+                  {Object.keys(AllOptions.background).map((value, index) => (
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key={index}
+                      value={value}
+                    >
+                      {value}
 
-                    {value !== "Select Background" && (
-                      <ListItemIcon>
-                        <Box
-                          component="img"
-                          id="background"
-                          src={
-                            AllOptions.background[
-                              value === "Select Background" ? "Greenish" : value
-                            ]
-                          }
-                          width="30px"
-                          height="30px"
-                          borderRadius={"4px"}
-                          right={"20px"}
-                          alignContent={"center"}
-                        />
-                      </ListItemIcon>
-                    )}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                sx={{
-                  color: "#0D7F41",
-                  backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
-                }}
-                variant="outlined"
-                displayEmpty
-                required
-                inputProps={{ "aria-label": "Without label" }}
-                defaultValue={"Select Fur"}
-                onChange={(e) => setBody(e.target.value)}
-              >
-                {Object.keys(AllOptions.body).map((value, index) => (
-                  <MenuItem
-                    sx={{
+                      {value !== "Select Background" && (
+                        <ListItemIcon>
+                          <Box
+                            component="img"
+                            src={AllOptions.background[value]}
+                            width="30px"
+                            height="30px"
+                            borderRadius={"4px"}
+                            right={"20px"}
+                            alignContent={"center"}
+                          />
+                        </ListItemIcon>
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {dropdownMan.Background && (
+                  <Box
+                    style={{
                       display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
-                    }}
-                    key={index}
-                    value={value}
-                  >
-                    {value}
+                      alignItems: "center",
+                      gap: "1rem",
+                      padding: "0",
 
-                    {value !== "Select Fur" && (
-                      <ListItemIcon>
-                        <Box
-                          component="img"
-                          id="background"
-                          sx={{
-                            backgroundColor: "#ffeb60",
-                          }}
-                          src={AllOptions.body[value]}
-                          width="30px"
-                          height="30px"
-                          borderRadius={"4px"}
-                          right={"20px"}
-                          alignContent={"center"}
-                        />
-                      </ListItemIcon>
-                    )}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                sx={{
-                  color: "#0D7F41",
-                  backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
-                }}
-                variant="outlined"
-                displayEmpty
-                required
-                inputProps={{ "aria-label": "Without label" }}
-                defaultValue={"Select Eyes"}
-                onChange={(e) => setEyes(e.target.value)}
-              >
-                {Object.keys(AllOptions.eyes).map((value, index) => (
-                  <MenuItem
-                    sx={{
+                      justifyContent: "center",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <Close
+                      sx={{
+                        color: "#ffff",
+                        background: "#c6162b",
+                        borderRadius: "50%",
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        color: "#fff",
+                        fontFamily: "Turret Road",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      This field is required
+                    </span>
+                  </Box>
+                )}
+              </FormControl>
+              <FormControl error={dropdownMan.Body}>
+                <Select
+                  sx={{
+                    color: "#0D7F41",
+                    backgroundColor: theme.palette.neutral.main,
+                    width: "276px",
+                    height: "50px",
+                  }}
+                  variant="outlined"
+                  displayEmpty
+                  required
+                  inputProps={{ "aria-label": "Without label" }}
+                  defaultValue={"Select Fur"}
+                  onChange={(e) => {
+                    setBody(e.target.value);
+                    setdropdownMan({ ...dropdownMan, Body: false });
+                  }}
+                >
+                  {Object.keys(AllOptions.body).map((value, index) => (
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key={index}
+                      value={value}
+                    >
+                      {value}
+
+                      {value !== "Select Fur" && (
+                        <ListItemIcon>
+                          <Box
+                            component="img"
+                            sx={{
+                              backgroundColor: "#ffeb60",
+                            }}
+                            src={SmallSizeOptions.body[value]}
+                            width="30px"
+                            height="30px"
+                            borderRadius={"4px"}
+                            right={"20px"}
+                            alignContent={"center"}
+                          />
+                        </ListItemIcon>
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {dropdownMan.Body && (
+                  <Box
+                    style={{
                       display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
-                    }}
-                    key={index}
-                    value={value}
-                  >
-                    {value}
+                      alignItems: "center",
+                      gap: "1rem",
+                      padding: "0",
 
-                    {value !== "Select Eyes" && (
-                      <ListItemIcon>
-                        <Box
-                          component="img"
-                          id="background"
-                          sx={{
-                            backgroundColor: "#ffeb60",
-                          }}
-                          src={AllOptions.eyes[value]}
-                          width="30px"
-                          height="30px"
-                          borderRadius={"4px"}
-                          right={"20px"}
-                          alignContent={"center"}
-                        />
-                      </ListItemIcon>
-                    )}
-                  </MenuItem>
-                ))}
-              </Select>
+                      justifyContent: "center",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <Close
+                      sx={{
+                        color: "#ffff",
+                        background: "#c6162b",
+                        borderRadius: "50%",
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        color: "#fff",
+                        fontFamily: "Turret Road",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      This field is required
+                    </span>
+                  </Box>
+                )}
+              </FormControl>
+              <FormControl error={dropdownMan.Eyes}>
+                <Select
+                  sx={{
+                    color: "#0D7F41",
+                    backgroundColor: theme.palette.neutral.main,
+                    width: "276px",
+                    height: "50px",
+                  }}
+                  variant="outlined"
+                  displayEmpty
+                  required
+                  inputProps={{ "aria-label": "Without label" }}
+                  defaultValue={"Select Eyes"}
+                  onChange={(e) => {
+                    setEyes(e.target.value);
+                    setdropdownMan({ ...dropdownMan, Eyes: false });
+                  }}
+                >
+                  {Object.keys(AllOptions.eyes).map((value, index) => (
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key={index}
+                      value={value}
+                    >
+                      {value}
+
+                      {value !== "Select Eyes" && (
+                        <ListItemIcon>
+                          <Box
+                            component="img"
+                            sx={{
+                              backgroundColor: "#ffeb60",
+                            }}
+                            src={SmallSizeOptions.eyes[value]}
+                            width="30px"
+                            height="30px"
+                            borderRadius={"4px"}
+                            right={"20px"}
+                            alignContent={"center"}
+                          />
+                        </ListItemIcon>
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {dropdownMan.Eyes && (
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      padding: "0",
+
+                      justifyContent: "center",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <Close
+                      sx={{
+                        color: "#ffff",
+                        background: "#c6162b",
+                        borderRadius: "50%",
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        color: "#fff",
+                        fontFamily: "Turret Road",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      This field is required
+                    </span>
+                  </Box>
+                )}
+              </FormControl>
+              <FormControl error={dropdownMan.Mouth}>
+                <Select
+                  sx={{
+                    color: "#0D7F41",
+                    backgroundColor: theme.palette.neutral.main,
+                    width: "276px",
+                    height: "50px",
+                  }}
+                  variant="outlined"
+                  displayEmpty
+                  required
+                  inputProps={{ "aria-label": "Without label" }}
+                  defaultValue={"Select Mouth"}
+                  onChange={(e) => {
+                    setMouth(e.target.value);
+                    setdropdownMan({ ...dropdownMan, Mouth: false });
+                  }}
+                >
+                  {Object.keys(AllOptions.mouth).map((value, index) => (
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key={index}
+                      value={value}
+                    >
+                      {value}
+
+                      {value !== "Select Mouth" && (
+                        <ListItemIcon>
+                          <Box
+                            component="img"
+                            sx={{
+                              backgroundColor: "#ffeb60",
+                            }}
+                            src={AllOptions.mouth[value]}
+                            width="30px"
+                            height="30px"
+                            borderRadius={"4px"}
+                            right={"20px"}
+                            alignContent={"center"}
+                          />
+                        </ListItemIcon>
+                      )}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {dropdownMan.Mouth && (
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1rem",
+                      padding: "0",
+
+                      justifyContent: "center",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <Close
+                      sx={{
+                        color: "#ffff",
+                        background: "#c6162b",
+                        borderRadius: "50%",
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        color: "#fff",
+                        fontFamily: "Turret Road",
+                        fontSize: "16px",
+                        fontWeight: 500,
+                      }}
+                    >
+                      This field is required
+                    </span>
+                  </Box>
+                )}
+              </FormControl>
               <Select
                 sx={{
                   color: "#0D7F41",
@@ -582,7 +834,6 @@ const Dashboard = () => {
                       <ListItemIcon>
                         <Box
                           component="img"
-                          id="background"
                           sx={{
                             backgroundColor: "#ffeb60",
                           }}
@@ -598,59 +849,7 @@ const Dashboard = () => {
                   </MenuItem>
                 ))}
               </Select>
-              <Select
-                sx={{
-                  color: "#0D7F41",
-                  backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
-                }}
-                variant="outlined"
-                displayEmpty
-                required
-                inputProps={{ "aria-label": "Without label" }}
-                defaultValue={"Select Mouth"}
-                onChange={(e) => setMouth(e.target.value)}
-              >
-                {Object.keys(AllOptions.mouth).map((value, index) => (
-                  <MenuItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
-                    }}
-                    key={index}
-                    value={value}
-                  >
-                    {value}
 
-                    {value !== "Select Mouth" && (
-                      <ListItemIcon>
-                        <Box
-                          component="img"
-                          id="background"
-                          sx={{
-                            backgroundColor: "#ffeb60",
-                          }}
-                          src={AllOptions.mouth[value]}
-                          width="30px"
-                          height="30px"
-                          borderRadius={"4px"}
-                          right={"20px"}
-                          alignContent={"center"}
-                        />
-                      </ListItemIcon>
-                    )}
-                  </MenuItem>
-                ))}
-              </Select>
               <Select
                 sx={{
                   color: "#0D7F41",
@@ -688,7 +887,6 @@ const Dashboard = () => {
                       <ListItemIcon>
                         <Box
                           component="img"
-                          id="background"
                           sx={{
                             backgroundColor: "#ffeb60",
                           }}
@@ -705,163 +903,550 @@ const Dashboard = () => {
                 ))}
               </Select>
               {/*  create a input box with icon on the right side */}
-              <Box
+              <Select
                 sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  color: "#0D7F41",
+                  backgroundColor: theme.palette.neutral.main,
                   width: "276px",
                   height: "50px",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  backgroundColor: theme.palette.neutral.main,
                 }}
-              >
-                <Select
-                  sx={{
-                    color: "#0D7F41",
-                    backgroundColor: theme.palette.neutral.main,
-                    width: "276px",
-                    height: "50px",
-                  }}
-                  variant="outlined"
-                  displayEmpty
-                  required
-                  inputProps={{ "aria-label": "Without label" }}
-                  defaultValue={"Ai Variant"}
-                  onChange={(e) => {
-                    if (e.target.value === "Ai Variant") {
-                      myref.current.style.zIndex = 1;
-                    } else if (e.target.value === "Original") {
-                      setBackground(prevBackground);
+                variant="outlined"
+                displayEmpty
+                required
+                inputProps={{ "aria-label": "Without label" }}
+                defaultValue={"Select Variant"}
+                onChange={(e) => {
+                  setSelected(e.target.value);
+                  if (e.target.value === "Ai Variant") {
+                    setMsg(
+                      "It might take 60-90 seconds to generate and process the AI results"
+                    );
+                    if (imageMidJourney === "none") {
                       myref.current.style.zIndex = 1;
                     } else {
-                      setBackground(e.target.value);
+                      myref.current.src = imageMidJourney;
                       myref.current.style.zIndex = 2;
                     }
+                  } else if (e.target.value === "Original") {
+                    myref.current.src = AllOptions.background[prevBackground];
+                    myref.current.style.zIndex = 1;
+                  } else {
+                    setBackground(e.target.value);
+                    myref.current.style.zIndex = 2;
+                  }
+                }}
+              >
+                <MenuItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    color: "#ffff",
+                    fontFamily: "Turret Road",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    letterSpacing: "0.05em",
+                    lineHeight: "17px",
+                    textAlign: "center",
+                  }}
+                  key="org0"
+                  value={"Select Variant"}
+                >
+                  Select Variant
+                </MenuItem>
+                <MenuItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    color: "#ffff",
+                    fontFamily: "Turret Road",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    letterSpacing: "0.05em",
+                    lineHeight: "17px",
+                    textAlign: "center",
+                  }}
+                  key="org1"
+                  value={"Original"}
+                >
+                  Original
+                </MenuItem>
+                <MenuItem
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    color: "#ffff",
+                    fontFamily: "Turret Road",
+                    fontWeight: 700,
+                    fontSize: "16px",
+                    letterSpacing: "0.05em",
+                    lineHeight: "17px",
+                    textAlign: "center",
+                  }}
+                  key="0"
+                  value="Ai Variant"
+                >
+                  Ai Variant
+                </MenuItem>
+                {Object.keys(AllOptions.background).map((value, index) => {
+                  // console.log(value);
+                  if (value.length === 2) {
+                    return (
+                      <MenuItem
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          color: "#ffff",
+                          fontFamily: "Turret Road",
+                          fontWeight: 700,
+                          fontSize: "16px",
+                          letterSpacing: "0.05em",
+                          lineHeight: "17px",
+                          textAlign: "center",
+                        }}
+                        key={index}
+                        value={value}
+                      >
+                        {value}
+
+                        <ListItemIcon>
+                          <Box
+                            component="img"
+                            sx={{
+                              backgroundColor: "#ffeb60",
+                            }}
+                            src={AllOptions.background[value]}
+                            width="30px"
+                            height="30px"
+                            borderRadius={"4px"}
+                            right={"20px"}
+                            alignContent={"center"}
+                          />
+                        </ListItemIcon>
+                      </MenuItem>
+                    );
+                  }
+                })}
+              </Select>
+              {selected === "Ai Variant" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "276px",
+                    height: "50px",
+                    borderRadius: "4px",
+                    fontWeight: "bold",
+                    backgroundColor: theme.palette.neutral.main,
                   }}
                 >
-                  <MenuItem
+                  <Select
                     sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
+                      color: "#0D7F41",
+                      backgroundColor: theme.palette.neutral.main,
+                      width: "276px",
+                      height: "50px",
                     }}
-                    key="0"
-                    value="Ai Variant"
-                  >
-                    Ai Variant
-                  </MenuItem>
-                  <MenuItem
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      color: "#ffff",
-                      fontFamily: "Turret Road",
-                      fontWeight: 700,
-                      fontSize: "16px",
-                      letterSpacing: "0.05em",
-                      lineHeight: "17px",
-                      textAlign: "center",
+                    variant="outlined"
+                    displayEmpty
+                    required
+                    inputProps={{ "aria-label": "Without label" }}
+                    defaultValue={"Select Ai Theme"}
+                    onChange={(e) => {
+                      setNftTheme(e.target.value);
                     }}
-                    key="org"
-                    value={"Original"}
                   >
-                    Original
-                  </MenuItem>
-                  {Object.keys(AllOptions.background).map((value, index) => {
-                    // console.log(value);
-                    if (value.length === 2) {
-                      return (
-                        <MenuItem
-                          sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            color: "#ffff",
-                            fontFamily: "Turret Road",
-                            fontWeight: 700,
-                            fontSize: "16px",
-                            letterSpacing: "0.05em",
-                            lineHeight: "17px",
-                            textAlign: "center",
-                          }}
-                          key={index}
-                          value={value}
-                        >
-                          {value}
-
-                          <ListItemIcon>
-                            <Box
-                              component="img"
-                              id="background"
-                              sx={{
-                                backgroundColor: "#ffeb60",
-                              }}
-                              src={AllOptions.background[value]}
-                              width="30px"
-                              height="30px"
-                              borderRadius={"4px"}
-                              right={"20px"}
-                              alignContent={"center"}
-                            />
-                          </ListItemIcon>
-                        </MenuItem>
-                      );
-                    }
-                  })}
-                </Select>
-                <Button onClick={generateImage}>
-                  {aiBtn === "generate" && (
-                    <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
-                  )}
-                  {aiBtn === "generating" && (
-                    <Pending
+                    <MenuItem
                       sx={{
-                        color: "#004b23",
-                        width: "2rem",
-
-                        "@keyframes rotate": {
-                          "0%": {
-                            transform: "rotate(0deg)",
-                            // color: "#0056b3",
-                          },
-                          "25%": {
-                            transform: "rotate(90deg)",
-                            // color: "#00b3a5",
-                          },
-                          "50%": {
-                            transform: "rotate(180deg)",
-                            // color: "#ff8c00",
-                          },
-                          "100%": {
-                            transform: "rotate(360deg)",
-                            // color: "#e60073",
-                          },
-                        },
-                        animation: "rotate 2s linear infinite",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
                       }}
-                    />
-                  )}
-                  {aiBtn === "generated" && (
-                    <Task sx={{ color: "#0D7F41", width: "2rem" }} />
-                  )}
-                </Button>
-              </Box>
+                      key="0"
+                      value="Select Ai Theme"
+                    >
+                      Select Ai Theme
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org1"
+                      value={"Portraiture"}
+                    >
+                      Portraiture
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org2"
+                      value={"Abstract"}
+                    >
+                      Abstract
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org3"
+                      value={"Surrealism"}
+                    >
+                      Surrealism
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org4"
+                      value={"Fantasy"}
+                    >
+                      Fantasy
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org5"
+                      value={"Minimalism"}
+                    >
+                      Minimalism
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org6"
+                      value={"Graffiti"}
+                    >
+                      Graffiti
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org7"
+                      value={"Pop Art"}
+                    >
+                      Pop Art
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org8"
+                      value={"Indigenous"}
+                    >
+                      Indigenous
+                    </MenuItem>
+                  </Select>
+                  <Button
+                    ref={midJourneyButton}
+                    onClick={
+                      !midJourneyButton?.current?.disabled
+                        ? generateImage
+                        : null
+                    }
+                  >
+                    {aiBtn === "generate" && (
+                      <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
+                    )}
+                    {aiBtn === "generating" && (
+                      <Pending
+                        sx={{
+                          color: "#004b23",
+                          width: "2rem",
+
+                          "@keyframes rotate": {
+                            "0%": {
+                              transform: "rotate(0deg)",
+                            },
+                            "25%": {
+                              transform: "rotate(90deg)",
+                            },
+                            "50%": {
+                              transform: "rotate(180deg)",
+                            },
+                            "100%": {
+                              transform: "rotate(360deg)",
+                            },
+                          },
+                          animation: "rotate 2s linear infinite",
+                        }}
+                      />
+                    )}
+                    {aiBtn === "generated" && (
+                      <Task sx={{ color: "#0D7F41", width: "2rem" }} />
+                    )}
+                  </Button>
+                </Box>
+              )}
+              {imageMidJourney !== "none" && selected === "Ai Variant" && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "276px",
+                    height: "50px",
+                    borderRadius: "4px",
+                    fontWeight: "bold",
+                    backgroundColor: theme.palette.neutral.main,
+                  }}
+                >
+                  <Select
+                    sx={{
+                      color: "#0D7F41",
+                      backgroundColor: theme.palette.neutral.main,
+                      width: "276px",
+                      height: "50px",
+                    }}
+                    variant="outlined"
+                    displayEmpty
+                    required
+                    inputProps={{ "aria-label": "Without label" }}
+                    defaultValue={"Select Version"}
+                    onChange={(e) => {
+                      setAtVersion(e.target.value);
+                    }}
+                  >
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="0"
+                      value="Select Version"
+                    >
+                      Select Version
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org1"
+                      value={"U1"}
+                    >
+                      Version1
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org2"
+                      value={"U2"}
+                    >
+                      Version2
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org3"
+                      value={"U3"}
+                    >
+                      Version3
+                    </MenuItem>
+                    <MenuItem
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        color: "#ffff",
+                        fontFamily: "Turret Road",
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        letterSpacing: "0.05em",
+                        lineHeight: "17px",
+                        textAlign: "center",
+                      }}
+                      key="org4"
+                      value={"U4"}
+                    >
+                      Version4
+                    </MenuItem>
+                  </Select>
+                  <Button
+                    ref={midJourneyVersionButton}
+                    onClick={
+                      !midJourneyVersionButton?.current?.disabled
+                        ? generateVersionImage
+                        : null
+                    }
+                  >
+                    {aiVersionBtn === "generate" && (
+                      <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
+                    )}
+                    {aiVersionBtn === "generating" && (
+                      <Pending
+                        sx={{
+                          color: "#004b23",
+                          width: "2rem",
+
+                          "@keyframes rotate": {
+                            "0%": {
+                              transform: "rotate(0deg)",
+                            },
+                            "25%": {
+                              transform: "rotate(90deg)",
+                            },
+                            "50%": {
+                              transform: "rotate(180deg)",
+                            },
+                            "100%": {
+                              transform: "rotate(360deg)",
+                            },
+                          },
+                          animation: "rotate 2s linear infinite",
+                        }}
+                      />
+                    )}
+                    {aiVersionBtn === "generated" && (
+                      <Task sx={{ color: "#0D7F41", width: "2rem" }} />
+                    )}
+                  </Button>
+                </Box>
+              )}
+              {isTablet && selected === "Ai Variant" && (
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: "18px",
+                      textAlign: "center",
+                      fontFamily: "Turret Road",
+                      padding: "0 1rem",
+                      color: msg.includes("Error") ? "#ff0000" : "#ffff",
+                    }}
+                  >
+                    {msg}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Box>
           {/* image Box */}
           <Box
-            width="100%"
+            width={isMobile ? "100%" : "512px"}
             sx={{
               position: "relative",
             }}
@@ -872,10 +1457,13 @@ const Dashboard = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: isTablet ? "auto" : "100%",
-                height: "512px",
+                maxWidth: "512px",
+                maxHeight: "512px",
+                aspectRatio: "1/1",
+                background:
+                  "linear-gradient(110.85deg, #209053 -1.82%, #05381C 102.5%)",
                 // backgroundColor: theme.palette.neutral.main,
-                borderRadius: "10px",
+                borderRadius: "5px",
                 position: "relative",
                 boxShadow: "5px 3px 22px rgb(0 0 0)",
                 // margin: "0 10%",
@@ -888,44 +1476,62 @@ const Dashboard = () => {
                 src={AllOptions.background[background]}
                 width="100%"
                 height="100%"
-                borderRadius={"4px"}
+                borderRadius={"0px"}
+                alt=""
                 sx={{ zIndex: "1", position: "absolute" }}
               />
-              <Box
-                component="img"
-                id="body"
-                src={AllOptions.body[body]}
-                width="512px"
-                sx={{ zIndex: "1", position: "absolute" }}
-              />
-              <Box
-                component="img"
-                id="eyes"
-                src={AllOptions.eyes[eyes]}
-                width="512px"
-                sx={{ position: "absolute", zIndex: "1" }}
-              />
-              <Box
-                component="img"
-                id="outfit"
-                src={AllOptions.outfit[outfit]}
-                width="512px"
-                sx={{ position: "absolute", zIndex: "1" }}
-              />
-              <Box
-                component="img"
-                id="mouth"
-                src={AllOptions.mouth[mouth]}
-                width="512px"
-                sx={{ position: "absolute", zIndex: "1" }}
-              />
-              <Box
-                component="img"
-                id="hair"
-                src={AllOptions.hair[hair]}
-                width="512px"
-                sx={{ position: "absolute", zIndex: "1" }}
-              />
+
+              {body !== "Select Fur" && (
+                <Box
+                  component="img"
+                  id="body"
+                  src={AllOptions.body[body]}
+                  width="100%"
+                  alt=""
+                  overflow={"hidden"}
+                  sx={{ zIndex: "1", position: "absolute" }}
+                />
+              )}
+              {eyes !== "Select Eyes" && (
+                <Box
+                  component="img"
+                  alt=""
+                  id="eyes"
+                  src={AllOptions.eyes[eyes]}
+                  width="100%"
+                  sx={{ position: "absolute", zIndex: "1" }}
+                />
+              )}
+              {outfit !== "Select Outfit" && (
+                <Box
+                  component="img"
+                  alt=""
+                  id="outfit"
+                  src={AllOptions.outfit[outfit]}
+                  width="100%"
+                  sx={{ position: "absolute", zIndex: "1" }}
+                />
+              )}
+              {mouth !== "Select Mouth" && (
+                <Box
+                  component="img"
+                  id="mouth"
+                  alt=""
+                  src={AllOptions.mouth[mouth]}
+                  width="100%"
+                  sx={{ position: "absolute", zIndex: "1" }}
+                />
+              )}
+              {hair !== "Select Hair" && (
+                <Box
+                  component="img"
+                  alt=""
+                  id="hair"
+                  src={AllOptions.hair[hair]}
+                  width="100%"
+                  sx={{ position: "absolute", zIndex: "1" }}
+                />
+              )}
             </Box>
             {isDownload && (
               <Box
@@ -939,8 +1545,8 @@ const Dashboard = () => {
                   padding: "8px",
                   zIndex: "2",
                   margin: "10px",
-                  top: "10px", // Move 10 pixels down from the top
-                  right: "10px", // Move 10 pixels from the right
+                  top: "10px",
+                  right: "10px",
                 }}
               >
                 <RotateRight
@@ -973,37 +1579,60 @@ const Dashboard = () => {
                   padding: "8px",
                   zIndex: "2",
                   margin: "10px",
-                  top: "10px", // Move 10 pixels down from the top
-                  right: "10px", // Move 10 pixels from the right
+                  top: "10px",
+                  right: "10px",
                 }}
               />
             )}
+
+            {!isTablet && selected === "Ai Variant" && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  mt: "10px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "18px",
+                    textAlign: "center",
+                    fontFamily: "Turret Road",
+                    padding: "0 1rem",
+                    color: msg.includes("Error") ? "#ff0000" : "#ffff",
+                  }}
+                >
+                  {msg}
+                </Typography>
+              </Box>
+            )}
+            <Box
+              sx={{
+                textAlign: "center",
+                mt: "20px",
+              }}
+            >
+              <Button
+                onClick={handleTweet}
+                sx={{
+                  backgroundColor: "#ffff",
+                  color: "#1DA1F2",
+                  width: "276px",
+                  textTransform: "none",
+                  gap: "10px",
+                  fontFamily: "Turret Road",
+
+                  "&:hover": {
+                    backgroundColor: "#ffff",
+                  },
+                }}
+              >
+                <Twitter /> Tweet my honorary
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
       {/* cp3 */}
-      <Box
-        sx={{
-          ml: isTablet ? "0" : "280px",
-        }}
-      >
-        <Button
-          onClick={handleTweet}
-          sx={{
-            backgroundColor: "#ffff",
-            color: "#1DA1F2",
-            width: "276px",
-            textTransform: "none",
-            gap: "10px",
-
-            "&:hover": {
-              backgroundColor: "#ffff",
-            },
-          }}
-        >
-          <Twitter /> Tweet my honorary
-        </Button>
-      </Box>
     </Box>
   );
 };

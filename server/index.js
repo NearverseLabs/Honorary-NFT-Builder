@@ -9,7 +9,13 @@ import multer from "multer";
 import { fileURLToPath } from "url";
 import { downloadImage } from "./controllers/imageDownload.js";
 import { dalle } from "./controllers/openai.js";
+import {
+  midJourneyImage,
+  midJourneyImageVersion,
+  midJourneyImageButton,
+} from "./controllers/midJourney.js";
 import { Configuration, OpenAIApi } from "openai";
+import { TNL } from "tnl-midjourney-api";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -37,6 +43,10 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const TNL_API_KEY = process.env.MIDJOURNEY_API_KEY;
+const tnl = new TNL(TNL_API_KEY);
+export const midjourneyAPI = tnl;
+
 export const openai = new OpenAIApi(configuration);
 
 const upload = multer({ storage: storage });
@@ -45,6 +55,9 @@ const upload = multer({ storage: storage });
 // app.post("/twitter/getImage", upload.single("picture"), register);
 app.post("/openai/dalle", upload.single("picture"), dalle);
 app.post("/imageDownload", downloadImage);
+app.post("/midjourney/image", upload.single("picture"), midJourneyImage);
+app.post("/midjourney/imageVersion", midJourneyImageVersion);
+app.post("/midjourney/imageButton", midJourneyImageButton);
 
 const PORT = 5000;
 

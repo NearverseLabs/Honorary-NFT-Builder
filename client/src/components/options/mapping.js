@@ -50,19 +50,15 @@ import NinjaBand from "assets/Hair/Ninja Band.png";
 import Rabbit from "assets/Hair/Rabbit.png";
 
 // mouth
-// import MouthL from "assets/Mouth/mouth 1.png";
-// import Mouth2 from "assets/Mouth/mouth 2.png";
-// import Mouth3 from "assets/Mouth/mouth 3.png";
-// import Mouth4 from "assets/Mouth/mouth 4.png";
-// import Mouth5 from "assets/Mouth/mouth 5.png";
-// import Mouth6 from "assets/Mouth/mouth 6.png";
-// import Mouth7 from "assets/Mouth/mouth 7.png";
 import Censored from "assets/Mouth/Censored.png";
 import Gamps from "assets/Mouth/Gamps.png";
 import Happy from "assets/Mouth/Happy.png";
-import JokerMouth from "assets/Mouth/Joker.png";
-import SimpleMouth from "assets/Mouth/Simple.png";
+import Puffing from "assets/Mouth/Puffing.png";
+import Rage from "assets/Mouth/Rage.png";
+import Sad from "assets/Mouth/Sad.png";
+import Silly from "assets/Mouth/Silly.png";
 import Surprised from "assets/Mouth/Surprised.png";
+import Teethy from "assets/Mouth/Teethy.png";
 
 // outfit
 // import Outfit1 from "assets/Outfit/outfit 1.png";
@@ -83,9 +79,32 @@ import Nature from "assets/Body/Nature.png";
 import WhiteTiger from "assets/Body/White Tiger.png";
 import Wood from "assets/Body/Wood.png";
 
+// body-small size
+import GalaxyMin from "assets/Body/highcompress_highcompress_Galaxy-min.png";
+import MessyMin from "assets/Body/highcompress_highcompress_Messy-min.png";
+import NatureMin from "assets/Body/highcompress_highcompress_Nature-min.png";
+import WhiteTigerMin from "assets/Body/highcompress_highcompress_White Tiger-min.png";
+import WoodMin from "assets/Body/highcompress_highcompress_Wood-min.png";
+
+// small size eyes
+import FireAndIceEyesMin from "assets/Eyes/Fire and Ice-min.png";
+import GreenEyesMin from "assets/Eyes/Green-min.png";
+import JokerEyesMin from "assets/Eyes/Joker-min.png";
+import RainbowEyesMin from "assets/Eyes/Rainbow-min.png";
+import SunflowerEyesMin from "assets/Eyes/Sunflower-min.png";
+
+// small size outtfit
+import BabyPouchOutfitMin from "assets/Outfit/Baby Pouch-min.png";
+import EskimoOutfitMin from "assets/Outfit/Eskimo-min.png";
+import PilotOutfitMin from "assets/Outfit/Pilot-min.png";
+import ScientistOutfitMin from "assets/Outfit/Scientist-min.png";
+import WizardOutfitMin from "assets/Outfit/Wizard-min.png";
+
+import GreenDefault from "assets/Background/default.png";
+
 export const AllOptions = {
   background: {
-    "Select Background": Greenish,
+    "Select Background": GreenDefault,
     Blueish: Blueish,
     Greenish: Greenish,
     Pinkish: Pinkish,
@@ -112,9 +131,12 @@ export const AllOptions = {
     Censored: Censored,
     Gamps: Gamps,
     Happy: Happy,
-    Joker: JokerMouth,
-    Simple: SimpleMouth,
+    Puffing: Puffing,
+    Rage: Rage,
+    Sad: Sad,
+    Silly: Silly,
     Surprised: Surprised,
+    Teethy: Teethy,
   },
   outfit: {
     "Select Outfit": "none",
@@ -134,128 +156,29 @@ export const AllOptions = {
   },
 };
 
-const background_options = [
-  "Select Background",
-  "Blue",
-  "Mint Green",
-  "Pink",
-  "Red",
-  "Violet",
-  "Yellow",
-];
-
-const fur_options = [
-  "Select Fur",
-  "Brown",
-  "Chocolate",
-  "Ginger",
-  "Sand",
-  "Cream",
-  "Charcoal",
-  "Periwinkle",
-  "Panda",
-  "Devil",
-  "Rose",
-  "Zombie",
-  "Alien",
-  "Skeleton",
-  "Glass",
-];
-
-const clothes_options = [
-  "Santa Suit",
-  "Hoodie - Black",
-  "Hoodie - White",
-  "Hoodie - Blue",
-  "Hoodie - Mint",
-  "Hoodie - Orange",
-  "T-shirt - Black",
-  "T-shirt - White",
-  "T-shirt - Blue",
-  "T-shirt - Mint",
-  "T-shirt - Orange",
-  "T-shirt - Fast food",
-  "Tanktop",
-  "Plaid shirt - Black",
-  "Plaid shirt - White",
-  "Plaid shirt - Blue",
-  "Plaid shirt - Red",
-  "Plaid shirt - Green",
-  "Suit - Black",
-  "Suit - White",
-  "Suit - Blue",
-  "Suit - Tan",
-  "Safety vest",
-  "Military vest",
-  "Safari shirt",
-  "Pirate shirt",
-  "Wizard robe",
-  "SSJ gi",
-  "Space suit - White",
-  "Space suit - Orange",
-];
-
-const mouth_options = ["Select Mouth", "Face mask", "Beard"];
-
-const eyes_options = [
-  "Select Eyes",
-  "Black shades",
-  "Gold shades",
-  "Diamond shades",
-  "Pirate eye-patch",
-];
-
-const head_options = [
-  "Santa hat 1",
-  "Santa hat 2",
-  "Cap - Black",
-  "Cap - Grey",
-  "Cap - Blue",
-  "Cap - Fast food",
-  "Beanie - Black",
-  "Beanie - Grey",
-  "Beanie - Blue",
-  "Fedora - Black",
-  "Fedora - Blue",
-  "Fedora - Tan",
-  "Strawhat",
-  "Cowboy hat",
-  "Top hat",
-  "Gatsby hat",
-  "Party hat",
-  "Crown",
-  "Tiara",
-  "Antlers",
-  "Devil horns",
-  "Halo",
-  "Angel wings",
-  "Backwards cap",
-  "Headband - Pink",
-  "Headband - Blue",
-  "Headband - White",
-  "Headband - Black",
-  "Headband - Red",
-  "Flower crown",
-  "Dragon horns",
-  "Unicorn horn",
-  "Bunny ears",
-  "Frog hat",
-  "Strawberry hat",
-  "Pineapple hat",
-  "Watermelon hat",
-  "Pizza hat",
-  "Hamburger hat",
-  "French fries hat",
-  "Ice cream hat",
-  "Popcorn hat",
-  "Fried chicken hat",
-];
-
-export const options = {
-  background: background_options,
-  fur: fur_options,
-  clothes: clothes_options,
-  mouth: mouth_options,
-  eyes: eyes_options,
-  head: head_options,
+export const SmallSizeOptions = {
+  body: {
+    "Select Fur": "none",
+    Galaxy: GalaxyMin,
+    Messy: MessyMin,
+    Nature: NatureMin,
+    "White Tiger": WhiteTigerMin,
+    Wood: WoodMin,
+  },
+  outfit: {
+    "Select Outfit": "none",
+    "Baby Pouch": BabyPouchOutfitMin,
+    Eskimo: EskimoOutfitMin,
+    Pilot: PilotOutfitMin,
+    Scientist: ScientistOutfitMin,
+    Wizard: WizardOutfitMin,
+  },
+  eyes: {
+    "Select Eyes": "none",
+    "Fire and Ice": FireAndIceEyesMin,
+    Green: GreenEyesMin,
+    Joker: JokerEyesMin,
+    Rainbow: RainbowEyesMin,
+    Sunflower: SunflowerEyesMin,
+  },
 };

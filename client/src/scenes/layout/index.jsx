@@ -16,7 +16,7 @@ const Layout = () => {
     name: "John Doe",
   };
   return (
-    <Box display={isNonMobile ? "flex" : "block"} width="100%" height="100%">
+    <Box display={isNonMobile ? "flex" : "block" } width="100%" height="100%">
       <Box flexGrow={1}>
         <Navbar
           user={data || {}}

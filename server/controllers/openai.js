@@ -4,6 +4,7 @@ import express from "express";
 import axios from "axios";
 import fs from "fs";
 import path from "path";
+import Jimp from "jimp";
 
 import { fileURLToPath } from "url";
 
@@ -52,12 +53,10 @@ export const dalle = async (req, res) => {
       }
       // console.log('Image deleted successfully');
     });
-    
+
     res.status(200).json({ photo: aiResponse.data });
   } catch (error) {
     // console.error(error);
-    res
-      .status(500)
-      .send(error || "Something went wrong");
+    res.status(500).send(error || "Something went wrong");
   }
 };

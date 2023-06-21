@@ -8,9 +8,11 @@ body,
 .app {
   height: 100%;
   width: 100%;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Zen Dots", sans-serif;
 }
-
+body{
+  padding-right: 0 !important;
+}
 /* upper setting are default settings */
 /* todo:- 
    1.Update the below setting in the theme.js file
