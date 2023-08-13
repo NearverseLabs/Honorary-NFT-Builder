@@ -189,6 +189,8 @@ const Dashboard = () => {
       setdropdownMan({ ...dropdownMan, Mouth: true });
       return;
     }
+    
+   
 
     // disable the button
     midJourneyButton.current.disabled = true;
@@ -196,7 +198,7 @@ const Dashboard = () => {
     setGeneratingImg(true);
     // appennd the processing icon to the aibtn button
     setAiBtn("generating");
-    const prompt = randomPrompt() + `${nftTheme}`;
+    const prompt = randomPrompt() + ` Background: ${background}, Fur: ${body}, Expression: ${mouth}, ${outfit==="Select Outfit" ? "": `Clothing: ${outfit}`}, Art-Theme: ${nftTheme}`;
     const formdata = new FormData();
     formdata.append("prompt", prompt);
     const imageBlob = await new Promise((resolve) => {
@@ -409,12 +411,12 @@ const Dashboard = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: isTablet ? "column" : "row",
+            flexDirection: isTablet ? "column-reverse" : "row",
             gap: "40px",
             padding: "0 5%",
             alignItems: isTablet ? "center" : "flex-start",
             // flexWrap: "wrap",
-            justifyContent: "space-between",
+            justifyContent: "center",
             width: "100%",
           }}
         >
@@ -447,8 +449,8 @@ const Dashboard = () => {
                   sx={{
                     color: "#0D7F41",
                     backgroundColor: theme.palette.neutral.main,
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                   }}
                   variant="outlined"
                   displayEmpty
@@ -535,8 +537,8 @@ const Dashboard = () => {
                   sx={{
                     color: "#0D7F41",
                     backgroundColor: theme.palette.neutral.main,
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                   }}
                   variant="outlined"
                   displayEmpty
@@ -624,8 +626,8 @@ const Dashboard = () => {
                   sx={{
                     color: "#0D7F41",
                     backgroundColor: theme.palette.neutral.main,
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                   }}
                   variant="outlined"
                   displayEmpty
@@ -713,8 +715,8 @@ const Dashboard = () => {
                   sx={{
                     color: "#0D7F41",
                     backgroundColor: theme.palette.neutral.main,
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                   }}
                   variant="outlined"
                   displayEmpty
@@ -801,8 +803,8 @@ const Dashboard = () => {
                 sx={{
                   color: "#0D7F41",
                   backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
+                  width: "220px",
+                  height: "40px",
                 }}
                 variant="outlined"
                 displayEmpty
@@ -854,8 +856,8 @@ const Dashboard = () => {
                 sx={{
                   color: "#0D7F41",
                   backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
+                  width: "220px",
+                  height: "40px",
                 }}
                 variant="outlined"
                 displayEmpty
@@ -907,8 +909,8 @@ const Dashboard = () => {
                 sx={{
                   color: "#0D7F41",
                   backgroundColor: theme.palette.neutral.main,
-                  width: "276px",
-                  height: "50px",
+                  width: "220px",
+                  height: "40px",
                 }}
                 variant="outlined"
                 displayEmpty
@@ -1038,8 +1040,8 @@ const Dashboard = () => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                     borderRadius: "4px",
                     fontWeight: "bold",
                     backgroundColor: theme.palette.neutral.main,
@@ -1049,8 +1051,8 @@ const Dashboard = () => {
                     sx={{
                       color: "#0D7F41",
                       backgroundColor: theme.palette.neutral.main,
-                      width: "276px",
-                      height: "50px",
+                      width: "220px",
+                      height: "40px",
                     }}
                     variant="outlined"
                     displayEmpty
@@ -1226,6 +1228,9 @@ const Dashboard = () => {
                   </Select>
                   <Button
                     ref={midJourneyButton}
+                    sx={{
+                      minWidth: "27px",
+                    }}
                     onClick={
                       !midJourneyButton?.current?.disabled
                         ? generateImage
@@ -1272,8 +1277,8 @@ const Dashboard = () => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    width: "276px",
-                    height: "50px",
+                    width: "220px",
+                    height: "40px",
                     borderRadius: "4px",
                     fontWeight: "bold",
                     backgroundColor: theme.palette.neutral.main,
@@ -1283,8 +1288,8 @@ const Dashboard = () => {
                     sx={{
                       color: "#0D7F41",
                       backgroundColor: theme.palette.neutral.main,
-                      width: "276px",
-                      height: "50px",
+                      width: "220px",
+                      height: "40px",
                     }}
                     variant="outlined"
                     displayEmpty
@@ -1431,6 +1436,7 @@ const Dashboard = () => {
                 <Box>
                   <Typography
                     sx={{
+                      // display: isTablet ? "block" : "none",
                       fontSize: "18px",
                       textAlign: "center",
                       fontFamily: "Turret Road",
@@ -1608,6 +1614,7 @@ const Dashboard = () => {
             <Box
               sx={{
                 textAlign: "center",
+                display: isTablet ? "none" : "",
                 mt: "20px",
               }}
             >
@@ -1616,7 +1623,7 @@ const Dashboard = () => {
                 sx={{
                   backgroundColor: "#ffff",
                   color: "#1DA1F2",
-                  width: "276px",
+                  width: "220px",
                   textTransform: "none",
                   gap: "10px",
                   fontFamily: "Turret Road",
@@ -1630,7 +1637,33 @@ const Dashboard = () => {
               </Button>
             </Box>
           </Box>
+          
         </Box>
+        <Box
+              sx={{
+                textAlign: "center",
+                display: isTablet ? "flex" : "none",
+                mt: "20px",
+              }}
+            >
+              <Button
+                onClick={handleTweet}
+                sx={{
+                  backgroundColor: "#ffff",
+                  color: "#1DA1F2",
+                  width: "220px",
+                  textTransform: "none",
+                  gap: "10px",
+                  fontFamily: "Turret Road",
+
+                  "&:hover": {
+                    backgroundColor: "#ffff",
+                  },
+                }}
+              >
+                <Twitter /> Tweet my honorary
+              </Button>
+            </Box>
       </Box>
       {/* cp3 */}
     </Box>

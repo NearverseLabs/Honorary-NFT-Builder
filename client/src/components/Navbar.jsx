@@ -1,16 +1,16 @@
 import React from "react";
 
 import { FaTwitter, FaDiscord } from "react-icons/fa";
+import {TfiWorld} from "react-icons/tfi"
 
 import FlexBetween from "components/FlexBetween";
 
-import { AppBar, Box, Toolbar, Typography, useTheme } from "@mui/material";
+import { AppBar, Box, Toolbar } from "@mui/material";
 // import the svg logo
 import Logo from "assets/logo.png";
 
 const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
-  const theme = useTheme();
-
+  
   return (
     <AppBar
       sx={{
@@ -73,6 +73,13 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
             rel="noopener noreferrer"
           >
             <FaTwitter size="35px" color="#fff" />
+          </a>
+          <a
+            href="https://twitter.com/FelixCollective"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <TfiWorld size="33px" color="#fff" />
           </a>
         </FlexBetween>
       </Toolbar>
