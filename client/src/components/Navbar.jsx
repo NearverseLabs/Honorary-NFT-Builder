@@ -55,7 +55,7 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
 
         {/* RIGHT SIDE */}
         <FlexBetween
-          gap="1.5rem"
+          gap="1rem"
           sx={{
             mt: "18px",
           }}
@@ -65,21 +65,21 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FaDiscord size="35px" color="#fff" />
+            <FaDiscord size="30px" color="#fff" />
           </a>
           <a
             href="https://twitter.com/FelixCollective"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FaTwitter size="35px" color="#fff" />
+            <FaTwitter size="30px" color="#fff" />
           </a>
           <a
             href="https://twitter.com/FelixCollective"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <TfiWorld size="33px" color="#fff" />
+            <TfiWorld size="30px" color="#fff" />
           </a>
         </FlexBetween>
       </Toolbar>

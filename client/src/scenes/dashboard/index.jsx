@@ -53,7 +53,7 @@ const Dashboard = () => {
   const [prevBackground, setPrevBackground] = useState("Greenish");
   const [body, setBody] = useState("Select Fur");
   const [selected, setSelected] = useState("Original");
-  const [nftTheme, setNftTheme] = useState("Select Ai Theme");
+  const [nftTheme, setNftTheme] = useState("Ai Theme");
 
   const [generatedImage, setGeneratedImage] = useState(false);
   const [getDalleImage] = useGetDalleImageMutation();
@@ -169,8 +169,8 @@ const Dashboard = () => {
       });
   };
   const generateImage = async () => {
-    if (nftTheme === "Select Ai Theme") {
-      alert("Please Select Ai Theme");
+    if (nftTheme === "Ai Theme") {
+      alert("Please Ai Theme");
       return;
     }
     if (background === "Select Background") {
@@ -364,7 +364,7 @@ const Dashboard = () => {
               fontStyle: "normal",
               textAlign: "center",
               fontWeight: 400,
-              fontSize: "40px",
+              fontSize: "35px",
               lineHeight: "60px",
               margin: "0 5%",
             }}
@@ -374,7 +374,7 @@ const Dashboard = () => {
               sx={{
                 fontStyle: "normal",
                 fontWeight: "400",
-                fontSize: "40px",
+                fontSize: "35px",
                 textAlign: "center",
                 background:
                   "linear-gradient(89.64deg, #D8C74F 19.51%, #3BAB6E 63.86%, #3CBE78 101.29%)",
@@ -397,7 +397,7 @@ const Dashboard = () => {
               fontStyle: "normal",
               wordWrap: "break-word",
               width: "80%",
-              fontSize: "24px",
+              fontSize: "22px",
               lineHeight: "160%",
               letterSpacing: "-0.01em",
               marginLeft: "10%",
@@ -1058,7 +1058,7 @@ const Dashboard = () => {
                     displayEmpty
                     required
                     inputProps={{ "aria-label": "Without label" }}
-                    defaultValue={"Select Ai Theme"}
+                    defaultValue={"Ai Theme"}
                     onChange={(e) => {
                       setNftTheme(e.target.value);
                     }}
@@ -1077,9 +1077,9 @@ const Dashboard = () => {
                         textAlign: "center",
                       }}
                       key="0"
-                      value="Select Ai Theme"
+                      value="Ai Theme"
                     >
-                      Select Ai Theme
+                      Ai Theme
                     </MenuItem>
                     <MenuItem
                       sx={{
