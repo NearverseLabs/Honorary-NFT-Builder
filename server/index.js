@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
+import mongoose from "mongoose";
 import path from "path";
 import multer from "multer";
 import { fileURLToPath } from "url";
@@ -16,6 +17,7 @@ import {
 } from "./controllers/midJourney.js";
 import { Configuration, OpenAIApi } from "openai";
 import { TNL } from "tnl-midjourney-api";
+import CountModel from "./CountModel.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -58,7 +60,22 @@ app.post("/imageDownload", downloadImage);
 app.post("/midjourney/image", upload.single("picture"), midJourneyImage);
 app.post("/midjourney/imageVersion", midJourneyImageVersion);
 app.post("/midjourney/imageButton", midJourneyImageButton);
+app.get("/totalgenerated", async (req, res) => {
+  const _id = "6533d9aef7df2cc4158c5706";
+  const gen = await CountModel.findById(_id);
+  return res.status(200).json(gen);
+});
 
 const PORT = 5000;
 
-app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    // database <cluster0>
+    dbName: "felixAi",
+  })
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+  })
+  .catch((error) => console.log(`${error} did not connect`));

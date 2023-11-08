@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { midjourneyAPI } from "../index.js";
+import CountModel from "../CountModel.js";
 
 import fs from "fs";
 import path from "path";
@@ -44,6 +45,12 @@ export const midJourneyImage = async (req, res) => {
       // console.log('Image deleted successfully');
     });
 
+    const _id = "6533d9aef7df2cc4158c5706";
+    // update the count by one with this id
+    await CountModel.findByIdAndUpdate(_id, {
+      $inc: { count: 1 },
+    });
+
     if (midJourneyResponse.success) {
       res.status(200).json(progressResponse);
       return;
@@ -52,7 +59,7 @@ export const midJourneyImage = async (req, res) => {
 
     res.status(200).json({ photo: midJourneyResponse });
   } catch (error) {
-    res.status(500).send(error || "Something went wrong");
+    res.status(500).send("Something went wrong");
   }
 };
 
@@ -89,7 +96,7 @@ export const midJourneyImageVersion = async (req, res) => {
 
     res.status(200).json({ photo: midJourneyResponse });
   } catch (error) {
-    res.status(500).send(error || "Something went wrong");
+    res.status(500).send("Something went wrong");
   }
 };
 

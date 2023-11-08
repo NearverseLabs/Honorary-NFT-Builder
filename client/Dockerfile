@@ -15,6 +15,9 @@ COPY . .
 # Build the production version of the application
 RUN npm run build
 
+# delete node_modules
+RUN rm -rf node_modules
+
 # Serve the production version of the application with a static server
 RUN npm install -g serve
 CMD serve -s build
@@ -22,5 +25,3 @@ CMD serve -s build
 # Expose port 3000 so that it can be accessed from the host
 EXPOSE 3000
 
-# Set environment variables
-ENV REACT_APP_API_URL=https://nftserver-s4tcdk7akq-el.a.run.app/

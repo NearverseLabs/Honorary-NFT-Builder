@@ -75,7 +75,7 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
             <FaTwitter size="30px" color="#fff" />
           </a>
           <a
-            href="https://twitter.com/FelixCollective"
+            href="https://www.felixcollective.app"
             target="_blank"
             rel="noopener noreferrer"
           >

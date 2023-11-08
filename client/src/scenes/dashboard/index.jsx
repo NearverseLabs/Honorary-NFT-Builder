@@ -23,7 +23,7 @@ import {
 
 import { textPrompt } from "./aiPowered";
 import { AllOptions, SmallSizeOptions } from "components/options/mapping";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 
@@ -32,6 +32,8 @@ import {
   useGetMidJourneyImageMutation,
   useGetMidJourneyImageVersionMutation,
 } from "state/api";
+import Switch, { SwitchProps } from "@mui/material/Switch";
+import { styled } from "@mui/material/styles";
 
 function randomPrompt() {
   return textPrompt[Math.floor(Math.random() * 20)];
@@ -54,12 +56,14 @@ const Dashboard = () => {
   const [body, setBody] = useState("Select Fur");
   const [selected, setSelected] = useState("Original");
   const [nftTheme, setNftTheme] = useState("Ai Theme");
+  const [dalleImage, setDalleImage] = useState([]);
+  const [aigenerated, setAigenerated] = useState(0);
 
-  const [generatedImage, setGeneratedImage] = useState(false);
+  // const [generatedImage, setGeneratedImage] = useState(false);
   const [getDalleImage] = useGetDalleImageMutation();
   const [getMidJourneyImage] = useGetMidJourneyImageMutation();
   const [getMidJourneyVersionImage] = useGetMidJourneyImageVersionMutation();
-  const [generatingImg, setGeneratingImg] = useState(false);
+  // const [generatingImg, setGeneratingImg] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
   const [aiBtn, setAiBtn] = useState("generate");
   const [aiVersionBtn, setAiVersionBtn] = useState("generate");
@@ -82,9 +86,9 @@ const Dashboard = () => {
   const handleDownload = () => {
     const element = document.getElementById("imageBox");
     setIsDownload(true);
-    if (background.length === 2) {
+    if (background.length === 2 || localStorage.getItem("buttonMessageId")==="dalle") {
       const url = document.getElementById("background").src;
-      fetch(`${process.env.REACT_APP_API_URL}/imageDownload`, {
+      fetch(`${process.env.REACT_APP_API_URL}imageDownload`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,6 +145,21 @@ const Dashboard = () => {
     // midJourneyVersionButton.current.onclick = null;
 
     setAiVersionBtn("generating");
+    if(localStorage.getItem("buttonMessageId")==="dalle"){
+        const index = atVersion[atVersion.length - 1]
+        myref.current.src = dalleImage[parseInt(index)-1].url;
+        // change the z-index of the image
+        myref.current.style.zIndex = "2";
+        setAiVersionBtn("generated");
+        // enable the button
+        midJourneyButton.current.disabled = true;
+
+        setTimeout(() => {
+          setAiVersionBtn("generate");
+            midJourneyVersionButton.current.disabled = false;
+          // setAiBtn("generate");
+        }, 3000);
+    }else{
     getMidJourneyVersionImage({
       data: {
         version: atVersion,
@@ -157,16 +176,15 @@ const Dashboard = () => {
         // change the z-index of the image
         myref.current.style.zIndex = "2";
         setAiVersionBtn("generated");
-        setGeneratedImage(true);
-        setGeneratingImg(false);
         // enable the button
-        midJourneyButton.current.disabled = false;
-        midJourneyVersionButton.current.disabled = false;
-        setTimeout(() => {
-          setAiVersionBtn("generate");
-          setAiBtn("generate");
-        }, 3000);
+        midJourneyButton.current.disabled = true;
+        midJourneyVersionButton.current.disabled = true;
+        // setTimeout(() => {
+        //   setAiVersionBtn("generate");
+        //   setAiBtn("generate");
+        // }, 3000);
       });
+    }
   };
   const generateImage = async () => {
     if (nftTheme === "Ai Theme") {
@@ -189,16 +207,18 @@ const Dashboard = () => {
       setdropdownMan({ ...dropdownMan, Mouth: true });
       return;
     }
-    
-   
 
     // disable the button
     midJourneyButton.current.disabled = true;
 
-    setGeneratingImg(true);
+    // setGeneratingImg(true);
     // appennd the processing icon to the aibtn button
     setAiBtn("generating");
-    const prompt = randomPrompt() + ` Background: ${background}, Fur: ${body}, Expression: ${mouth}, ${outfit==="Select Outfit" ? "": `Clothing: ${outfit}`}, Art-Theme: ${nftTheme}`;
+    const prompt =
+      randomPrompt() +
+      ` Background: ${background}, Fur: ${body}, Expression: ${mouth}, ${
+        outfit === "Select Outfit" ? "" : `Clothing: ${outfit}`
+      }, Art-Theme: ${nftTheme}`;
     const formdata = new FormData();
     formdata.append("prompt", prompt);
     const imageBlob = await new Promise((resolve) => {
@@ -229,42 +249,49 @@ const Dashboard = () => {
     formData.append("image_name", fileName);
     formData.append("prompt", prompt);
     // console.log(formData.get("picture"));
+    // if getMidJourneyImage takes more than 100s then use DalleImag
+      let midJourneyPromise = getMidJourneyImage({ data: formData }).unwrap();
 
-    getMidJourneyImage({ data: formData })
-      .unwrap()
-      .then((res) => {
-        // if response status is not 200 and 201 then show error message
-
-        // console.log(res);
-        // if (res.status !== 200 && res.status !== 201) {
-        //   setMsg(
-        //     "Error generating AI results: API not responding. Please try later"
-        //   );
-        //   setAiBtn("generate");
-        //   return;
-        // }
-        // ;
-        localStorage.setItem("buttonMessageId", res.response.buttonMessageId);
-        localStorage.setItem("MessageId", res.response.originatingMessageId);
-        setImageMidJourney(res.response.imageUrl);
-        myref.current.src = res.response.imageUrl;
-        // change the z-index of the image
-        myref.current.style.zIndex = "2";
-        setMsg("");
-        setAiBtn("generated");
-        setGeneratedImage(true);
-        setGeneratingImg(false);
-        // setTimeout(() => {
-        //   setAiBtn("generate");
-        // }, 3000);
-      })
-      .catch((err) => {
-        setMsg(
-          "Error generating AI results: API not responding. Please try later"
-        );
-        midJourneyButton.current.disabled = false;
-        setAiBtn("generate");
+      const timeoutPromise = new Promise((resolve) => {
+          setTimeout(() => resolve({ response: { imageUrl: 'dall-e' } }), 100500); // 100 seconds
       });
+
+      Promise.race([midJourneyPromise, timeoutPromise])
+          .then((res) => {
+              if (res.response.imageUrl === 'dall-e') {
+                  getDalleImage({ data: formData }).unwrap().then((res) => {
+                        setDalleImage(res.photo.data);
+                        localStorage.setItem("buttonMessageId", "dalle");
+                        localStorage.setItem("MessageId", "dalleMessage");
+                        // console.log(res,"ds");
+                        setImageMidJourney(res.photo.data[0].url);
+                        myref.current.src = res.photo.data[0].url;
+                        // change the z-index of the image
+                        myref.current.style.zIndex = "2";
+                        setMsg("");
+                        setAiBtn("generated");
+                  });
+              } else {
+                  // Use the result from getMidJourneyImage
+                  localStorage.setItem("buttonMessageId", res.response.buttonMessageId);
+                  localStorage.setItem("MessageId", res.response.originatingMessageId);
+                  setImageMidJourney(res.response.imageUrl);
+                  myref.current.src = res.response.imageUrl;
+                  // change the z-index of the image
+                  myref.current.style.zIndex = "2";
+                  setMsg("");
+                  setAiBtn("generated");
+              }
+          })
+          .catch((err) => {
+              setMsg(
+                  "Error generating AI results: API not responding. Please try later"
+              );
+              midJourneyButton.current.disabled = false;
+              setAiBtn("generate");
+          });
+
+
   };
 
   const handleTweet = async () => {
@@ -276,6 +303,15 @@ const Dashboard = () => {
 
     window.open(twitterUrl, "_blank");
   };
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}totalgenerated`)
+      .then((res) => res.json())
+      .then((res) => {
+        // console.log(res);
+        setAigenerated(res.count);
+      });
+  }, [imageMidJourney]);
 
   return (
     <Box
@@ -405,6 +441,22 @@ const Dashboard = () => {
           >
             You earned an honorary from The Felix Collective merely for being
             here, surviving the bear market, and a ton of soft rugs.
+          </Typography>
+          <Typography
+            sx={{
+              color: theme.palette.neutral.main,
+              fontWeight: 400,
+              textAlign: "center",
+              fontStyle: "normal",
+              wordWrap: "break-word",
+              width: "80%",
+              fontSize: "22px",
+              lineHeight: "160%",
+              letterSpacing: "-0.01em",
+              marginLeft: "10%",
+            }}
+          >
+            AI Honorary Generations: {aigenerated}
           </Typography>
         </Box>
         {/* cp2 */}
@@ -905,7 +957,7 @@ const Dashboard = () => {
                 ))}
               </Select>
               {/*  create a input box with icon on the right side */}
-              <Select
+              {/* <Select
                 sx={{
                   color: "#0D7F41",
                   backgroundColor: theme.palette.neutral.main,
@@ -1032,7 +1084,52 @@ const Dashboard = () => {
                     );
                   }
                 })}
-              </Select>
+              </Select> */}
+              <div className="switchbody">
+                <Typography>Original</Typography>
+                <label class="switch">
+                  <input
+                    onChange={(e) => {
+                      if (e.target.checked === true) {
+                        setSelected("Ai Variant");
+                        setMsg(
+                          "It might take 60-90 seconds to generate and process the AI results"
+                        );
+                        if (imageMidJourney === "none") {
+                          myref.current.style.zIndex = 1;
+                        } else {
+                          myref.current.src = imageMidJourney;
+                          myref.current.style.zIndex = 2;
+                        }
+                      } else if (e.target.checked === false) {
+                        setSelected("Original");
+                        myref.current.src =
+                          AllOptions.background[prevBackground];
+                        myref.current.style.zIndex = 1;
+                      } else {
+                        setBackground(e.target.value);
+                        myref.current.style.zIndex = 2;
+                      }
+                    }}
+                    type="checkbox"
+                    id="checkbox"
+                  />
+                  <div class="indicator left"></div>
+                  <div class="indicator right"></div>
+                  <div
+                    // onClick={(e) => {
+                    //   const where = e.target.style.left;
+                    //   if (where === "40%") {
+                    //     e.target.style.left = "0%";
+                    //   } else {
+                    //     e.target.style.left = "40%";
+                    //   }
+                    // }}
+                    class="button"
+                  ></div>
+                </label>
+                <Typography>AI Variant</Typography>
+              </div>
               {selected === "Ai Variant" && (
                 <Box
                   sx={{
@@ -1231,11 +1328,7 @@ const Dashboard = () => {
                     sx={{
                       minWidth: "27px",
                     }}
-                    onClick={
-                      !midJourneyButton?.current?.disabled
-                        ? generateImage
-                        : null
-                    }
+                    onClick={imageMidJourney === "none" ? generateImage : null}
                   >
                     {aiBtn === "generate" && (
                       <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
@@ -1398,6 +1491,9 @@ const Dashboard = () => {
                         ? generateVersionImage
                         : null
                     }
+                    sx={{
+                      minWidth: "46px",
+                    }}
                   >
                     {aiVersionBtn === "generate" && (
                       <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
@@ -1637,33 +1733,32 @@ const Dashboard = () => {
               </Button>
             </Box>
           </Box>
-          
         </Box>
         <Box
-              sx={{
-                textAlign: "center",
-                display: isTablet ? "flex" : "none",
-                mt: "20px",
-              }}
-            >
-              <Button
-                onClick={handleTweet}
-                sx={{
-                  backgroundColor: "#ffff",
-                  color: "#1DA1F2",
-                  width: "220px",
-                  textTransform: "none",
-                  gap: "10px",
-                  fontFamily: "Turret Road",
+          sx={{
+            textAlign: "center",
+            display: isTablet ? "flex" : "none",
+            mt: "20px",
+          }}
+        >
+          <Button
+            onClick={handleTweet}
+            sx={{
+              backgroundColor: "#ffff",
+              color: "#1DA1F2",
+              width: "220px",
+              textTransform: "none",
+              gap: "10px",
+              fontFamily: "Turret Road",
 
-                  "&:hover": {
-                    backgroundColor: "#ffff",
-                  },
-                }}
-              >
-                <Twitter /> Tweet my honorary
-              </Button>
-            </Box>
+              "&:hover": {
+                backgroundColor: "#ffff",
+              },
+            }}
+          >
+            <Twitter /> Tweet my honorary
+          </Button>
+        </Box>
       </Box>
       {/* cp3 */}
     </Box>
