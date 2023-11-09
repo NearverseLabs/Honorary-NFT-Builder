@@ -55,11 +55,11 @@ const upload = multer({ storage: storage });
 
 // routes
 // app.post("/twitter/getImage", upload.single("picture"), register);
-app.post("/openai/dalle", upload.single("picture"), dalle);
+app.post("/openai/dalle", dalle);
 app.post("/imageDownload", downloadImage);
-app.post("/midjourney/image", upload.single("picture"), midJourneyImage);
-app.post("/midjourney/imageVersion", midJourneyImageVersion);
-app.post("/midjourney/imageButton", midJourneyImageButton);
+// app.post("/midjourney/image", upload.single("picture"), midJourneyImage);
+// app.post("/midjourney/imageVersion", midJourneyImageVersion);
+// app.post("/midjourney/imageButton", midJourneyImageButton);
 app.get("/totalgenerated", async (req, res) => {
   const _id = "6533d9aef7df2cc4158c5706";
   const gen = await CountModel.findById(_id);
@@ -78,4 +78,4 @@ mongoose
   .then(() => {
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
   })
-  .catch((error) => console.log(`${error} did not connect`));
+  .catch((error) => console.log(`error in monogodb did not connect`));

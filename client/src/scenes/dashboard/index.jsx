@@ -1,5 +1,4 @@
 import {
-  Cancel,
   Close,
   Download,
   Pending,
@@ -18,7 +17,6 @@ import {
   Button,
   ListItemIcon,
   FormControl,
-  InputLabel,
 } from "@mui/material";
 
 import { textPrompt } from "./aiPowered";
@@ -32,8 +30,6 @@ import {
   useGetMidJourneyImageMutation,
   useGetMidJourneyImageVersionMutation,
 } from "state/api";
-import Switch, { SwitchProps } from "@mui/material/Switch";
-import { styled } from "@mui/material/styles";
 
 function randomPrompt() {
   return textPrompt[Math.floor(Math.random() * 20)];
@@ -49,11 +45,11 @@ const Dashboard = () => {
   const theme = useTheme();
   const [background, setBackground] = useState("Select Background");
   const [eyes, setEyes] = useState("Select Eyes");
-  const [hair, setHair] = useState("Select Hair");
+  const [hair, setHair] = useState("Select Headwear");
   const [mouth, setMouth] = useState("Select Mouth");
   const [outfit, setOutfit] = useState("Select Outfit");
   const [prevBackground, setPrevBackground] = useState("Greenish");
-  const [body, setBody] = useState("Select Fur");
+  const [body, setBody] = useState("Select Body");
   const [selected, setSelected] = useState("Original");
   const [nftTheme, setNftTheme] = useState("Ai Theme");
   const [dalleImage, setDalleImage] = useState([]);
@@ -61,13 +57,10 @@ const Dashboard = () => {
 
   // const [generatedImage, setGeneratedImage] = useState(false);
   const [getDalleImage] = useGetDalleImageMutation();
-  const [getMidJourneyImage] = useGetMidJourneyImageMutation();
   const [getMidJourneyVersionImage] = useGetMidJourneyImageVersionMutation();
   // const [generatingImg, setGeneratingImg] = useState(false);
   const [isDownload, setIsDownload] = useState(false);
   const [aiBtn, setAiBtn] = useState("generate");
-  const [aiVersionBtn, setAiVersionBtn] = useState("generate");
-  const [atVersion, setAtVersion] = useState("Select Version");
   const [imageMidJourney, setImageMidJourney] = useState("none");
   const [msg, setMsg] = useState("");
   const [dropdownMan, setdropdownMan] = useState({
@@ -83,10 +76,14 @@ const Dashboard = () => {
 
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const handleDownload = () => {
     const element = document.getElementById("imageBox");
     setIsDownload(true);
-    if (background.length === 2 || localStorage.getItem("buttonMessageId")==="dalle") {
+    if (
+      background.length === 2 ||
+      localStorage.getItem("buttonMessageId") === "dalle"
+    ) {
       const url = document.getElementById("background").src;
       fetch(`${process.env.REACT_APP_API_URL}imageDownload`, {
         method: "POST",
@@ -135,57 +132,6 @@ const Dashboard = () => {
     }
   };
 
-  const generateVersionImage = async () => {
-    if (atVersion === "Select Version") {
-      alert("Please Select Version");
-      return;
-    }
-    // disable the button
-    midJourneyVersionButton.current.disabled = true;
-    // midJourneyVersionButton.current.onclick = null;
-
-    setAiVersionBtn("generating");
-    if(localStorage.getItem("buttonMessageId")==="dalle"){
-        const index = atVersion[atVersion.length - 1]
-        myref.current.src = dalleImage[parseInt(index)-1].url;
-        // change the z-index of the image
-        myref.current.style.zIndex = "2";
-        setAiVersionBtn("generated");
-        // enable the button
-        midJourneyButton.current.disabled = true;
-
-        setTimeout(() => {
-          setAiVersionBtn("generate");
-            midJourneyVersionButton.current.disabled = false;
-          // setAiBtn("generate");
-        }, 3000);
-    }else{
-    getMidJourneyVersionImage({
-      data: {
-        version: atVersion,
-        buttonId: localStorage.getItem("buttonMessageId"),
-      },
-    })
-      .unwrap()
-      .then((res) => {
-        localStorage.setItem(
-          `midJourneyVersion${atVersion}Image`,
-          res.response.imageUrl
-        );
-        myref.current.src = res.response.imageUrl;
-        // change the z-index of the image
-        myref.current.style.zIndex = "2";
-        setAiVersionBtn("generated");
-        // enable the button
-        midJourneyButton.current.disabled = true;
-        midJourneyVersionButton.current.disabled = true;
-        // setTimeout(() => {
-        //   setAiVersionBtn("generate");
-        //   setAiBtn("generate");
-        // }, 3000);
-      });
-    }
-  };
   const generateImage = async () => {
     if (nftTheme === "Ai Theme") {
       alert("Please Ai Theme");
@@ -195,7 +141,7 @@ const Dashboard = () => {
       setdropdownMan({ ...dropdownMan, Background: true });
       return;
     }
-    if (body === "Select Fur") {
+    if (body === "Select Body") {
       setdropdownMan({ ...dropdownMan, Body: true });
       return;
     }
@@ -219,79 +165,31 @@ const Dashboard = () => {
       ` Background: ${background}, Fur: ${body}, Expression: ${mouth}, ${
         outfit === "Select Outfit" ? "" : `Clothing: ${outfit}`
       }, Art-Theme: ${nftTheme}`;
-    const formdata = new FormData();
-    formdata.append("prompt", prompt);
-    const imageBlob = await new Promise((resolve) => {
-      const element = document.getElementById("imageBox");
-      if (isTablet) {
-        element.style.width = "512px";
-      }
-      html2canvas(element, {
-        width: 512,
-        height: 512,
-        x: (element.scrollWidth - 512) / 2,
-        y: (element.scrollHeight - 512) / 2,
-        useCORS: true,
-        allowTaint: true,
-        scale: window.devicePixelRatio, // added option to increase resolution
-      }).then((canvas) => {
-        canvas.toBlob(resolve, "image/png", 0.9); // added quality option (0.9)
-        element.style.width = "100%";
+    getDalleImage({
+      data: {
+        prompt: prompt,
+      },
+    })
+      .unwrap()
+      .then((res) => {
+        setDalleImage(res.photo.data);
+        localStorage.setItem("buttonMessageId", "dalle");
+        localStorage.setItem("MessageId", "dalleMessage");
+        // console.log(res,"ds");
+        setImageMidJourney(res.photo.data[0].url);
+        myref.current.src = res.photo.data[0].url;
+        // change the z-index of the image
+        myref.current.style.zIndex = "2";
+        setMsg("");
+        setAiBtn("generated");
+      })
+      .catch((err) => {
+        setMsg(
+          "Error generating AI results: API not responding. Please try later"
+        );
+        midJourneyButton.current.disabled = false;
+        setAiBtn("generate");
       });
-    });
-    const fileName = generateRandomName();
-    // create a image file
-    const file = new File([imageBlob], fileName, {
-      type: "image/png",
-    });
-    const formData = new FormData();
-    formData.append("picture", file);
-    formData.append("image_name", fileName);
-    formData.append("prompt", prompt);
-    // console.log(formData.get("picture"));
-    // if getMidJourneyImage takes more than 100s then use DalleImag
-      let midJourneyPromise = getMidJourneyImage({ data: formData }).unwrap();
-
-      const timeoutPromise = new Promise((resolve) => {
-          setTimeout(() => resolve({ response: { imageUrl: 'dall-e' } }), 100500); // 100 seconds
-      });
-
-      Promise.race([midJourneyPromise, timeoutPromise])
-          .then((res) => {
-              if (res.response.imageUrl === 'dall-e') {
-                  getDalleImage({ data: formData }).unwrap().then((res) => {
-                        setDalleImage(res.photo.data);
-                        localStorage.setItem("buttonMessageId", "dalle");
-                        localStorage.setItem("MessageId", "dalleMessage");
-                        // console.log(res,"ds");
-                        setImageMidJourney(res.photo.data[0].url);
-                        myref.current.src = res.photo.data[0].url;
-                        // change the z-index of the image
-                        myref.current.style.zIndex = "2";
-                        setMsg("");
-                        setAiBtn("generated");
-                  });
-              } else {
-                  // Use the result from getMidJourneyImage
-                  localStorage.setItem("buttonMessageId", res.response.buttonMessageId);
-                  localStorage.setItem("MessageId", res.response.originatingMessageId);
-                  setImageMidJourney(res.response.imageUrl);
-                  myref.current.src = res.response.imageUrl;
-                  // change the z-index of the image
-                  myref.current.style.zIndex = "2";
-                  setMsg("");
-                  setAiBtn("generated");
-              }
-          })
-          .catch((err) => {
-              setMsg(
-                  "Error generating AI results: API not responding. Please try later"
-              );
-              midJourneyButton.current.disabled = false;
-              setAiBtn("generate");
-          });
-
-
   };
 
   const handleTweet = async () => {
@@ -596,7 +494,7 @@ const Dashboard = () => {
                   displayEmpty
                   required
                   inputProps={{ "aria-label": "Without label" }}
-                  defaultValue={"Select Fur"}
+                  defaultValue={"Select Body"}
                   onChange={(e) => {
                     setBody(e.target.value);
                     setdropdownMan({ ...dropdownMan, Body: false });
@@ -621,7 +519,7 @@ const Dashboard = () => {
                     >
                       {value}
 
-                      {value !== "Select Fur" && (
+                      {value !== "Select Body" && (
                         <ListItemIcon>
                           <Box
                             component="img"
@@ -862,7 +760,7 @@ const Dashboard = () => {
                 displayEmpty
                 required
                 inputProps={{ "aria-label": "Without label" }}
-                defaultValue={"Select Hair"}
+                defaultValue={"Select Headwear"}
                 onChange={(e) => setHair(e.target.value)}
               >
                 {Object.keys(AllOptions.hair).map((value, index) => (
@@ -884,7 +782,7 @@ const Dashboard = () => {
                   >
                     {value}
 
-                    {value !== "Select Hair" && (
+                    {value !== "Select Headwear" && (
                       <ListItemIcon>
                         <Box
                           component="img"
@@ -1363,171 +1261,7 @@ const Dashboard = () => {
                   </Button>
                 </Box>
               )}
-              {imageMidJourney !== "none" && selected === "Ai Variant" && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "220px",
-                    height: "40px",
-                    borderRadius: "4px",
-                    fontWeight: "bold",
-                    backgroundColor: theme.palette.neutral.main,
-                  }}
-                >
-                  <Select
-                    sx={{
-                      color: "#0D7F41",
-                      backgroundColor: theme.palette.neutral.main,
-                      width: "220px",
-                      height: "40px",
-                    }}
-                    variant="outlined"
-                    displayEmpty
-                    required
-                    inputProps={{ "aria-label": "Without label" }}
-                    defaultValue={"Select Version"}
-                    onChange={(e) => {
-                      setAtVersion(e.target.value);
-                    }}
-                  >
-                    <MenuItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        color: "#ffff",
-                        fontFamily: "Turret Road",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        letterSpacing: "0.05em",
-                        lineHeight: "17px",
-                        textAlign: "center",
-                      }}
-                      key="0"
-                      value="Select Version"
-                    >
-                      Select Version
-                    </MenuItem>
-                    <MenuItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        color: "#ffff",
-                        fontFamily: "Turret Road",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        letterSpacing: "0.05em",
-                        lineHeight: "17px",
-                        textAlign: "center",
-                      }}
-                      key="org1"
-                      value={"U1"}
-                    >
-                      Version1
-                    </MenuItem>
-                    <MenuItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        color: "#ffff",
-                        fontFamily: "Turret Road",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        letterSpacing: "0.05em",
-                        lineHeight: "17px",
-                        textAlign: "center",
-                      }}
-                      key="org2"
-                      value={"U2"}
-                    >
-                      Version2
-                    </MenuItem>
-                    <MenuItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        color: "#ffff",
-                        fontFamily: "Turret Road",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        letterSpacing: "0.05em",
-                        lineHeight: "17px",
-                        textAlign: "center",
-                      }}
-                      key="org3"
-                      value={"U3"}
-                    >
-                      Version3
-                    </MenuItem>
-                    <MenuItem
-                      sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        color: "#ffff",
-                        fontFamily: "Turret Road",
-                        fontWeight: 700,
-                        fontSize: "16px",
-                        letterSpacing: "0.05em",
-                        lineHeight: "17px",
-                        textAlign: "center",
-                      }}
-                      key="org4"
-                      value={"U4"}
-                    >
-                      Version4
-                    </MenuItem>
-                  </Select>
-                  <Button
-                    ref={midJourneyVersionButton}
-                    onClick={
-                      !midJourneyVersionButton?.current?.disabled
-                        ? generateVersionImage
-                        : null
-                    }
-                    sx={{
-                      minWidth: "46px",
-                    }}
-                  >
-                    {aiVersionBtn === "generate" && (
-                      <SendOutlined sx={{ color: "#0D7F41", width: "2rem" }} />
-                    )}
-                    {aiVersionBtn === "generating" && (
-                      <Pending
-                        sx={{
-                          color: "#004b23",
-                          width: "2rem",
 
-                          "@keyframes rotate": {
-                            "0%": {
-                              transform: "rotate(0deg)",
-                            },
-                            "25%": {
-                              transform: "rotate(90deg)",
-                            },
-                            "50%": {
-                              transform: "rotate(180deg)",
-                            },
-                            "100%": {
-                              transform: "rotate(360deg)",
-                            },
-                          },
-                          animation: "rotate 2s linear infinite",
-                        }}
-                      />
-                    )}
-                    {aiVersionBtn === "generated" && (
-                      <Task sx={{ color: "#0D7F41", width: "2rem" }} />
-                    )}
-                  </Button>
-                </Box>
-              )}
               {isTablet && selected === "Ai Variant" && (
                 <Box>
                   <Typography
@@ -1583,7 +1317,7 @@ const Dashboard = () => {
                 sx={{ zIndex: "1", position: "absolute" }}
               />
 
-              {body !== "Select Fur" && (
+              {body !== "Select Body" && (
                 <Box
                   component="img"
                   id="body"
@@ -1624,7 +1358,7 @@ const Dashboard = () => {
                   sx={{ position: "absolute", zIndex: "1" }}
                 />
               )}
-              {hair !== "Select Hair" && (
+              {hair !== "Select Headwear" && (
                 <Box
                   component="img"
                   alt=""
@@ -1734,6 +1468,7 @@ const Dashboard = () => {
             </Box>
           </Box>
         </Box>
+
         <Box
           sx={{
             textAlign: "center",

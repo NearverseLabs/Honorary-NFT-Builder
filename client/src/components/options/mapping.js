@@ -1,25 +1,16 @@
 // background
-// import Yellow from "assets/Background/Yellow.png";
-// import Violet from "assets/Background/Violet.png";
-// import Red from "assets/Background/Red.png";
-// import Pink from "assets/Background/Pink.png";
-// import MintGreen from "assets/Background/Mint Green.png";
-// import Blue from "assets/Background/Blue.png";
+
 import Blueish from "assets/Background/Blueish.png";
 import Greenish from "assets/Background/Greenish.png";
-import Pinkish from "assets/Background/Pinkish.png";
+import Orangeish from "assets/Background/Orangeish.png";
 import Purpleish from "assets/Background/Purpleish.png";
 import Reddish from "assets/Background/Reddish.png";
-import Simple from "assets/Background/Simple.png";
+import Whiteish from "assets/Background/Whiteish.png";
+import Yellowish from "assets/Background/Yellowish.png";
 
 // eyes
-// import Alert from "assets/Eyes/Alert.png";
-// import EyesClosed from "assets/Eyes/Eyes Closed.png";
-// import Godly from "assets/Eyes/Godly.png";
-// import Modified from "assets/Eyes/Modified.png";
-// import normal from "assets/Eyes/normal.png";
-// import Wink from "assets/Eyes/Wink.png";
-// import Blink from "assets/Eyes/Blink.png";
+
+import Blink from "assets/Eyes/Blink.png";
 import FireAndIce from "assets/Eyes/Fire and Ice.png";
 import GreenEyes from "assets/Eyes/Green.png";
 import Joker from "assets/Eyes/Joker.png";
@@ -27,27 +18,10 @@ import Rainbow from "assets/Eyes/Rainbow.png";
 import Sunflower from "assets/Eyes/Sunflower.png";
 
 // hair
-// import Blonde from "assets/Hair/Blonde.png";
-// import David from "assets/Hair/David.png";
-// import GR22 from "assets/Hair/GR 22.png";
-// import GR from "assets/Hair/GR.png";
-// import GR2 from "assets/Hair/GR2.png";
-// import Green2 from "assets/Hair/Green 2.png";
-// import Green from "assets/Hair/Green.png";
-// import Magenta from "assets/Hair/Magenta.png";
-// import RedHair from "assets/Hair/Red.png";
-// import SaiyaV from "assets/Hair/Saiya V.png";
-// import SaiyanB from "assets/Hair/Saiyan B.png";
-// import SaiyanGR from "assets/Hair/Saiyan GR.png";
-// import SaiyanR from "assets/Hair/Saiyan R.png";
-// import Saiyan from "assets/Hair/Saiyan.png";
-// import SkyBlue from "assets/Hair/Sky blue.png";
-// import White from "assets/Hair/White.png";
-// import White2 from "assets/Hair/White2.png";
-// import White3 from "assets/Hair/White3.png";
-import Fish1 from "assets/Hair/Fish1.png";
-import NinjaBand from "assets/Hair/Ninja Band.png";
-import Rabbit from "assets/Hair/Rabbit.png";
+
+import Fish from "assets/Headwear/Fish.png";
+import NinjaBand from "assets/Headwear/Ninja Band.png";
+import Rabbit from "assets/Headwear/Rabbit.png";
 
 // mouth
 import Censored from "assets/Mouth/Censored.png";
@@ -61,10 +35,7 @@ import Surprised from "assets/Mouth/Surprised.png";
 import Teethy from "assets/Mouth/Teethy.png";
 
 // outfit
-// import Outfit1 from "assets/Outfit/outfit 1.png";
-// import Outfit2 from "assets/Outfit/outfit 2.png";
-// import Outfit3 from "assets/Outfit/outfit 3.png";
-// import Outfit4 from "assets/Outfit/outfit 4.png";
+
 import BabyPouch from "assets/Outfit/Baby Pouch.png";
 import Eskimo from "assets/Outfit/Eskimo.png";
 import Pilot from "assets/Outfit/Pilot.png";
@@ -76,22 +47,22 @@ import Wizard from "assets/Outfit/Wizard.png";
 import Galaxy from "assets/Body/Galaxy.png";
 import Messy from "assets/Body/Messy.png";
 import Nature from "assets/Body/Nature.png";
-import WhiteTiger from "assets/Body/White Tiger.png";
+import Striped from "assets/Body/Striped.png";
 import Wood from "assets/Body/Wood.png";
 
 // body-small size
-import GalaxyMin from "assets/Body/highcompress_highcompress_Galaxy-min.png";
-import MessyMin from "assets/Body/highcompress_highcompress_Messy-min.png";
-import NatureMin from "assets/Body/highcompress_highcompress_Nature-min.png";
-import WhiteTigerMin from "assets/Body/highcompress_highcompress_White Tiger-min.png";
-import WoodMin from "assets/Body/highcompress_highcompress_Wood-min.png";
-
+import GalaxyMin from "assets/Body/Galaxy-Min.png";
+import MessyMin from "assets/Body/Messy-Min.png";
+import NatureMin from "assets/Body/Nature-Min.png";
+import StripedMin from "assets/Body/Striped-Min.png";
+import WoodMin from "assets/Body/Wood-Min.png";
 // small size eyes
-import FireAndIceEyesMin from "assets/Eyes/Fire and Ice-min.png";
-import GreenEyesMin from "assets/Eyes/Green-min.png";
-import JokerEyesMin from "assets/Eyes/Joker-min.png";
-import RainbowEyesMin from "assets/Eyes/Rainbow-min.png";
-import SunflowerEyesMin from "assets/Eyes/Sunflower-min.png";
+import BlinkMin from "assets/Eyes/Blink-Min.png";
+import FireAndIceEyesMin from "assets/Eyes/Fire and Ice-Min.png";
+import GreenEyesMin from "assets/Eyes/Green-Min.png";
+import JokerEyesMin from "assets/Eyes/Joker-Min.png";
+import RainbowEyesMin from "assets/Eyes/Rainbow-Min.png";
+import SunflowerEyesMin from "assets/Eyes/Sunflower-Min.png";
 
 // small size outtfit
 import BabyPouchOutfitMin from "assets/Outfit/Baby Pouch-min.png";
@@ -107,13 +78,15 @@ export const AllOptions = {
     "Select Background": GreenDefault,
     Blueish: Blueish,
     Greenish: Greenish,
-    Pinkish: Pinkish,
+    Orangeish: Orangeish,
     Purpleish: Purpleish,
     Reddish: Reddish,
-    Simple: Simple,
+    Whiteish: Whiteish,
+    Yellowish: Yellowish,
   },
   eyes: {
     "Select Eyes": "none",
+    Blink: Blink,
     "Fire and Ice": FireAndIce,
     Green: GreenEyes,
     Joker: Joker,
@@ -121,8 +94,8 @@ export const AllOptions = {
     Sunflower: Sunflower,
   },
   hair: {
-    "Select Hair": "none",
-    Fish1: Fish1,
+    "Select Headwear": "none",
+    Fish: Fish,
     "Ninja Band": NinjaBand,
     Rabbit: Rabbit,
   },
@@ -147,22 +120,22 @@ export const AllOptions = {
     Wizard: Wizard,
   },
   body: {
-    "Select Fur": "none",
+    "Select Body": "none",
     Galaxy: Galaxy,
     Messy: Messy,
     Nature: Nature,
-    "White Tiger": WhiteTiger,
+    Striped: Striped,
     Wood: Wood,
   },
 };
 
 export const SmallSizeOptions = {
   body: {
-    "Select Fur": "none",
+    "Select Body": "none",
     Galaxy: GalaxyMin,
     Messy: MessyMin,
     Nature: NatureMin,
-    "White Tiger": WhiteTigerMin,
+    Striped: StripedMin,
     Wood: WoodMin,
   },
   outfit: {
@@ -175,6 +148,7 @@ export const SmallSizeOptions = {
   },
   eyes: {
     "Select Eyes": "none",
+    Blink: BlinkMin,
     "Fire and Ice": FireAndIceEyesMin,
     Green: GreenEyesMin,
     Joker: JokerEyesMin,
