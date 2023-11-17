@@ -66,6 +66,13 @@ app.get("/totalgenerated", async (req, res) => {
   return res.status(200).json(gen);
 });
 
+// app.get("/reset", async (req, res) => {
+//   const _id = "6533d9aef7df2cc4158c5706";
+//   // set the count to 0
+//   await CountModel.findByIdAndUpdate(_id, { count: 0 });
+//   return res.status(200).json({ message: "count reset" });
+// });
+
 const PORT = 5000;
 
 mongoose
