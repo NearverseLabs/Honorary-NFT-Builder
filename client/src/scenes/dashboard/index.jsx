@@ -66,10 +66,7 @@ const Dashboard = () => {
   const handleDownload = () => {
     const element = document.getElementById("imageBox");
     setIsDownload(true);
-    if (
-      background.length === 2 ||
-      localStorage.getItem("buttonMessageId") === "dalle"
-    ) {
+    if (myref.current.style.zIndex === "2") {
       const url = document.getElementById("background").src;
       fetch(`${process.env.REACT_APP_API_URL}imageDownload`, {
         method: "POST",
